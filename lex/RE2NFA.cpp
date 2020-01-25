@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "lex.h"
+#include "lex.hpp"
 
 using namespace std;
 

@@ -2,8 +2,8 @@
 // Created by 丁乐华 on 2020/1/24.
 //
 
-#ifndef EAC2_LEX_H
-#define EAC2_LEX_H
+#ifndef EAC2_LEX_HPP
+#define EAC2_LEX_HPP
 #include <string>
 #include <vector>
 #include <set>
@@ -117,4 +117,4 @@ public:
   void print () override;
 };
 
-#endif //EAC2_LEX_H
+#endif //EAC2_LEX_HPP

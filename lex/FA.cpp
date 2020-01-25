@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iterator>
-#include "lex.h"
+#include "lex.hpp"
 using namespace std;
 
 FA::State::State (int id) {

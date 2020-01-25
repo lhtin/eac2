@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-#include "lex.h"
+#include "lex.hpp"
 
 using namespace std;
 

@@ -3,7 +3,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
-#include "lex.h"
+#include "lex.hpp"
 using namespace std;
 
 NFA2DFA::NFA2DFA (RE2NFA& nfa): nfa(&nfa) {

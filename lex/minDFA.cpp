@@ -2,7 +2,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
-#include "lex.h"
+#include "lex.hpp"
 
 minDFA::minDFA (NFA2DFA& dfa): T() {
   chars = dfa.chars;
