@@ -4,9 +4,49 @@
 #include <map>
 #include <algorithm>
 #include "lex.hpp"
+#include "../utils/utils.hpp"
 using namespace std;
 
-NFA2DFA::NFA2DFA (RE2NFA& nfa): nfa(&nfa) {
+vector<FA::State*>* NFA2DFA::findQ (vector<State*>* q) {
+  if (q->empty()) {
+    return nullptr;
+  }
+  for (auto item : Q) {
+    if (includes(item->begin(), item->end(), q->begin(), q->end())) {
+      return item;
+    }
+  }
+  return nullptr;
+}
+
+void NFA2DFA::spread (vector<State*>* q) {
+  for (char c : nfa->chars) {
+    vector<State*>* t = closure(q, c);
+    if (t->empty()) {
+      continue;
+    }
+    vector<State*>* old = findQ(t);
+    if (old != nullptr) {
+      deltas.push_back(new Delta(M[q], c, M[old]));
+      continue;
+    }
+
+    epsilonClosure(t);
+    State* end = newState();
+    S.push_back(end);
+    deltas.push_back(new Delta(M[q], c, end));
+    auto it2 = find(t->begin(), t->end(), nfa->end);
+    if (it2 != t->end()) {
+      SA.push_back(end);
+    }
+    Q.push_back(t);
+    M[t] = end;
+
+    spread(t);
+  }
+}
+
+NFA2DFA::NFA2DFA (RE2NFA& nfa): nfa(&nfa), Q(), M() {
   chars = nfa.chars;
   map<vector<State*>*, State*> sMap;
   map<vector<State*>, vector<State*>*> qMap;
@@ -21,42 +61,9 @@ NFA2DFA::NFA2DFA (RE2NFA& nfa): nfa(&nfa) {
   if (it != q0->end()) {
     SA.push_back(s0);
   }
-  sMap[q0] = s0;
-  qMap[*q0] = q0;
-  WorkList.push(q0);
-  while (!WorkList.empty()) {
-    vector<State*>* q = WorkList.front();
-    State* start = sMap[q];
-    WorkList.pop();
-    for (char c : nfa.chars) {
-      vector<State*>* t = closure(q, c);
-      if (t->empty()) {
-        continue;
-      }
-      epsilonClosure(t);
-
-      auto it = qMap.find(*t);
-      if (it == qMap.end()) {
-        State* end = newState();
-        S.push_back(end);
-        deltas.push_back(new Delta(start, c, end));
-        auto it2 = find(t->begin(), t->end(), nfa.end);
-        if (it2 != t->end()) {
-          SA.push_back(end);
-        }
-        sMap[t] = end;
-        qMap[*t] = t;
-        WorkList.push(t);
-      } else {
-        delete t;
-        t = it->second;
-        deltas.push_back(new Delta(start, c, sMap[t]));
-      }
-    }
-  }
-  for (const auto& q : qMap) {
-    delete q.second;
-  }
+  Q.push_back(q0);
+  M[q0] = s0;
+  spread(q0);
 }
 vector<FA::State*>* NFA2DFA::closure (vector<State*>* q1, char accept) {
   vector<State*>* q2 = new vector<State*>();
@@ -69,6 +76,7 @@ vector<FA::State*>* NFA2DFA::closure (vector<State*>* q1, char accept) {
   return q2;
 }
 void NFA2DFA::epsilonClosure(vector<State*>* q) {
+//  printNow("epsilonClosure");
   bool has;
   do {
     has = false;
@@ -83,6 +91,11 @@ void NFA2DFA::epsilonClosure(vector<State*>* q) {
       }
     }
   } while (has);
+//  for (auto item : *q) {
+//    cout << " s" << item->n;
+//  }
+//  cout << endl;
+//  printNow("epsilonClosure end");
 }
 FA::State* NFA2DFA::getEndState (State* start, char accept) {
   auto it = find_if(

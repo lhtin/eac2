@@ -11,13 +11,6 @@ minDFA::minDFA (NFA2DFA& dfa): T() {
   T.push_back(states);
 
   set<State*> firstPart(dfa.SA.begin(), dfa.SA.end());
-  State* end = newState();
-  m[firstPart] = end;
-  S.push_back(end);
-  SA.push_back(end);
-  if (firstPart.count(dfa.s0) > 0) {
-    s0 = end;
-  }
   split(firstPart);
 
   bool needSplit;
@@ -48,6 +41,8 @@ minDFA::minDFA (NFA2DFA& dfa): T() {
     if (needSplit) {
       split(splitPart);
     }
+
+    // 生成集合对应的状态
     State* s = newState();
     m[splitPart] = s;
     S.push_back(s);
@@ -55,6 +50,15 @@ minDFA::minDFA (NFA2DFA& dfa): T() {
       s0 = s;
     }
   } while (needSplit);
+
+  // 生成包含终节点集合的终态
+  State* end = newState();
+  m[firstPart] = end;
+  S.push_back(end);
+  SA.push_back(end);
+  if (firstPart.count(dfa.s0) > 0) {
+    s0 = end;
+  }
 
   for (const auto& item : T) {
     State* start = m[item];
