@@ -70,7 +70,11 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
   int bracketCount = 0;
   while (at <= end) {
     char c = re[at];
-    if (c == '(') {
+    if (c == '\\') {
+      // 如果是转义字符则跳过
+      assert(at < end);
+      at += 1;
+    } else if (c == '(') {
       assert(bracketCount == 0); // 小括号不能出现在中括号里面
       parenthesisCount += 1;
     } else if (c == ')') {
@@ -167,13 +171,17 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
           left = new RENode(re, start, end - 1);
           string t(re, start, end - start + 1);
           t[end - start] = '*';
-          cout << "t: " << t << endl;
           right = new RENode(t, 0, t.size() - 1);
           return;
         }
       }
     } else {
       if (parenthesisCount == 0 && bracketCount == 0) {
+        if (c == '\\') {
+          assert(at < end);
+          at += 1;
+          c = re[at];
+        }
         if (at < end) {
           char next = re[at + 1];
           if (next == '*' || next == '+') {
