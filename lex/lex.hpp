@@ -9,6 +9,8 @@
 #include <set>
 #include <queue>
 #include <map>
+#include <fstream>
+#include <utility>
 using namespace std;
 
 const char EMPTY = '\0';
@@ -127,5 +129,49 @@ public:
   Set findP (State* s, SetSet& T);
   void print () override;
 };
+
+class WrapFA {
+private:
+  FA* fa;
+  FA::State* current;
+public:
+  explicit WrapFA (FA* fa);
+  bool accept (char c);
+  bool isFinish ();
+  void reset ();
+};
+const int BUFFER_MAX = 1024;
+enum TokenType {
+  VARIABLE,
+  KEYWORD,
+  SPACE,
+  INTEGER,
+  STRING,
+  UNKNOW
+};
+
+class Token {
+public:
+  string lex;
+  TokenType type;
+  string typeDesc;
+  Token (TokenType type, string lex);
+};
+
+class Lex {
+private:
+  vector<pair<WrapFA, TokenType>> list;
+  char buf[BUFFER_MAX * 2];
+  int at;
+  ifstream sourceFile;
+
+public:
+  Lex (string specPath, string sourcePath);
+  ~Lex ();
+  void addRE (string& re, string& category);
+  Token* nextToken ();
+};
+
+
 
 #endif //EAC2_LEX_HPP
