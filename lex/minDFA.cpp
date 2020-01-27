@@ -2,117 +2,95 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <iterator>
 #include "lex.hpp"
 
-minDFA::minDFA (NFA2DFA& dfa): T() {
-  chars = dfa.chars;
-  map<set<State*>, State*> m;
-  set<State*> states(dfa.S.begin(), dfa.S.end());
-  T.push_back(states);
-
-  set<State*> firstPart(dfa.SA.begin(), dfa.SA.end());
-  split(firstPart);
-
-  bool needSplit;
-  do {
-    set<State*>& top = T.back();
-    if (top.empty()) {
-      break;
-    }
-    auto begin = top.begin();
-    State* first = *begin;
-    set<State*> splitPart;
-    splitPart.insert(first);
-    begin++;
-    for (auto it = begin; it != top.end(); it++) {
-      State* s = *it;
-      bool allSame = true;
-      for (char c : dfa.chars) {
-        if (!isSameQ(dfa.getEndState(first, c), dfa.getEndState(s, c))) {
-          allSame = false;
-          break;
-        }
-      }
-      if (allSame) {
-        splitPart.insert(s);
+SetSet minDFA::split (const SetSet& P, const Set& p, NFA2DFA& dfa) {
+  Set temp1;
+  auto begin = p.begin();
+  temp1.insert(*begin);
+  for (auto it = next(begin); it != p.end(); it++) {
+    bool allOK = true;
+    for (char c : dfa.chars) {
+      FA::State* end1 = dfa.getEndState(*begin, c);
+      FA::State* end2 = dfa.getEndState(*it, c);
+      if (end1 != end2) {
+        allOK = false;
+        break;
       }
     }
-    needSplit = splitPart.size() < top.size();
-    if (needSplit) {
-      split(splitPart);
+    if (allOK) {
+      temp1.insert(*it);
     }
+  }
+  Set temp2;
+  set_difference(p.begin(), p.end(), temp1.begin(), temp1.end(), inserter(temp2, temp2.begin()));
 
-    // 生成集合对应的状态
+  SetSet result;
+  result.insert(temp1);
+  if (!temp2.empty()) {
+    result.insert(temp2);
+  }
+  return result;
+}
+
+Set minDFA::findP (FA::State* s, SetSet& T) {
+  for (const Set& item : T) {
+    if (item.count(s) > 0) {
+      return item;
+    }
+  }
+  return Set();
+}
+
+bool compare (FA::State* a, FA::State* b) {
+  return a->n < b->n;
+}
+
+minDFA::minDFA (NFA2DFA& dfa) {
+  SetSet T;
+  SetSet P;
+
+  Set all(dfa.S.begin(), dfa.S.end());
+  Set DA(dfa.SA.begin(), dfa.SA.end());
+  Set Rest;
+  set_difference(all.begin(), all.end(), DA.begin(), DA.end(), inserter(Rest, Rest.begin()));
+
+  T.insert(DA);
+  T.insert(Rest);
+  while (P.size() != T.size()) {
+    P = T;
+    T = SetSet();
+    for (const Set& p : P) {
+      SetSet temp = split(P, p, dfa);
+      T.insert(temp.begin(), temp.end());
+    }
+  }
+
+  Map M;
+  for (Set item : T) {
     State* s = newState();
-    m[splitPart] = s;
     S.push_back(s);
-    if (splitPart.count(dfa.s0) > 0) {
-      s0 = s;
-    }
-  } while (needSplit);
-
-  // 生成包含终节点集合的终态
-  State* end = newState();
-  m[firstPart] = end;
-  S.push_back(end);
-  SA.push_back(end);
-  if (firstPart.count(dfa.s0) > 0) {
-    s0 = end;
+    M[item] = s;
   }
 
-  for (const auto& item : T) {
-    State* start = m[item];
-    for (State* s1 : item) {
-      for (char c : dfa.chars) {
-        State* s2 = dfa.getEndState(s1, c);
-        if (s2 != nullptr) {
-          set<State*>* q = getQ(s2);
-          if (q != nullptr) {
-            State* end = m[*q];
-            addDelta(start, c, end);
-          }
-        }
-      }
+  Set SA;
+  for (Delta* item : dfa.deltas) {
+    Set t1 = findP(item->start, T);
+    State* start = M[t1];
+    if (t1.count(dfa.s0) > 0) {
+      s0 = start;
     }
+    Set t2 = findP(item->end, T);
+    State* end = M[t2];
+    Set inter;
+    set_intersection(dfa.SA.begin(), dfa.SA.end(), t2.begin(), t2.end(), inserter(inter, inter.begin()), compare);
+    if (!inter.empty()) {
+      SA.insert(end);
+    }
+    deltas.push_back(new Delta(start, item->accept, end));
   }
-}
-bool minDFA::isSameQ (State* s1, State* s2) {
-  if (s1 == s2) {
-    return true;
-  }
-  auto it = find_if(
-      T.begin(), T.end(),
-      [&](const set<State*>& q) {
-        return q.count(s1) > 0 && q.count(s2) > 0;
-      });
-  if (it != T.end()) {
-    return true;
-  } else {
-    return false;
-  }
-}
-set<FA::State*>* minDFA::getQ (State* state) {
-  auto it = find_if(
-      T.begin(), T.end(),
-      [&](const set<State*>& q) {
-        return q.count(state) > 0;
-      });
-  if (it != T.end()) {
-    return &(*it);
-  } else {
-    return nullptr;
-  }
-}
-void minDFA::split (set<State*>& part) {
-  set<State*>& top = T.back();
-  set<State*> rest;
-  set_difference(
-      top.begin(), top.end(),
-      part.begin(), part.end(),
-      inserter(rest, rest.begin()));
-  T.pop_back();
-  T.push_back(part);
-  T.push_back(rest);
+  this->SA = vector<State*>(SA.begin(), SA.end());
 }
 void minDFA::print () {
   cout << "-----minDFA start-----" << endl;

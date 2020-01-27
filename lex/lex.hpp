@@ -116,15 +116,15 @@ public:
 };
 
 //// minDFA
-class minDFA: public FA {
-private:
-  vector<set<State*>> T;
+using Set = set<FA::State*>;
+using SetSet = set<Set>;
+using Map = map<Set, FA::State*>;
 
+class minDFA: public FA {
 public:
   explicit minDFA (NFA2DFA& dfa);
-  void split (set<State*>& part);
-  set<State*>* getQ (State* state);
-  bool isSameQ (State* s1, State* s2);
+  SetSet split (const SetSet& P, const Set& p, NFA2DFA& dfa);
+  Set findP (State* s, SetSet& T);
   void print () override;
 };
 
