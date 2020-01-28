@@ -12,11 +12,15 @@ int main () {
 
 //  Lex lex("../../spec/01-lex.json", "../../spec/source.01");
   Lex lex("../../spec/pl0-lex.json", "../../spec/source.pl0");
+  printNow();
+  unsigned long long a = getNow();
   Token* token = lex.nextToken();
   while (token != nullptr) {
     cout << token->typeDesc << ": " << token->lex << endl;
     token = lex.nextToken();
   }
+  cout << "耗时:" << getNow() - a << endl;
+  printNow();
 //  string re = "a(b|c)*";
 //  string re = "fee|fie";
 //  string re = "[a-c]+";
