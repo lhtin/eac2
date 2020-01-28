@@ -16,7 +16,7 @@ using namespace std;
 const char EMPTY = '\0';
 
 //// 正则表达式
-enum Operator {
+enum class Operator {
   CONNECT,  // 连接 ab
   SELECT,   // 选择 |
   CLOSURE,  // 闭包 *
@@ -111,7 +111,6 @@ public:
   void epsilonClosure (vector<State*>* q);
   vector<State*>* closure (vector<State*>* q1, char accept);
   State* getEndState (State* start, char accept);
-  set<char> getAccept (State* start, State* end);
   void print () override;
   vector<State*>* findQ (vector<State*>* q);
   void spread (vector<State*>* q);
@@ -141,7 +140,7 @@ public:
   void reset ();
 };
 const int BUFFER_MAX = 1024;
-enum TokenType {
+enum class TokenType {
   VARIABLE,
   KEYWORD,
   SPACE,

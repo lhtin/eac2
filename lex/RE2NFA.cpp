@@ -7,14 +7,14 @@ RE2NFA::Node RE2NFA::construct (RENode& node) {
   Node res;
   State* s0;
   State* end;
-  if (node.op == CONNECT) {
+  if (node.op == Operator::CONNECT) {
     Node left = construct(*node.left);
     Node right = construct(*node.right);
     s0 = left.s0;
     end = right.end;
     SA.push_back(end);
     addDelta(left.end, EMPTY, right.s0);
-  } else if (node.op == SELECT) {
+  } else if (node.op == Operator::SELECT) {
     s0 = newState();
     end = newState();
     Node left = construct(*node.left);
@@ -26,7 +26,7 @@ RE2NFA::Node RE2NFA::construct (RENode& node) {
     addDelta(s0, EMPTY, right.s0);
     addDelta(left.end, EMPTY, end);
     addDelta(right.end, EMPTY, end);
-  } else if (node.op == CLOSURE) {
+  } else if (node.op == Operator::CLOSURE) {
     s0 = newState();
     end = newState();
     Node child = construct(*node.child);
@@ -37,12 +37,12 @@ RE2NFA::Node RE2NFA::construct (RENode& node) {
     addDelta(child.end, EMPTY, end);
     addDelta(s0, EMPTY, end);
     addDelta(child.end, EMPTY, child.s0);
-  } else if (node.op == GROUP) {
+  } else if (node.op == Operator::GROUP) {
     Node child = construct(*node.child);
     s0 = child.s0;
     end = child.end;
     SA.push_back(end);
-  } else if (node.op == LEAF) {
+  } else if (node.op == Operator::LEAF) {
     s0 = newState();
     end = newState();
     S.push_back(s0);

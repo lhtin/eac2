@@ -39,15 +39,15 @@ void WrapFA::reset () {
   current = fa->s0;
 }
 Token::Token (TokenType type, string lex): type(type), lex(lex) {
-  if (type == VARIABLE) {
+  if (type == TokenType::VARIABLE) {
     typeDesc = "VARIABLE";
-  } else if (type == KEYWORD) {
+  } else if (type == TokenType::KEYWORD) {
     typeDesc = "KEYWORD";
-  } else if (type == SPACE) {
+  } else if (type == TokenType::SPACE) {
     typeDesc = "SPACE";
-  } else if (type == INTEGER) {
+  } else if (type == TokenType::INTEGER) {
     typeDesc = "INTEGER";
-  } else if (type == STRING) {
+  } else if (type == TokenType::STRING) {
     typeDesc = "STRING";
   } else {
     typeDesc = "UNKNOW";
@@ -76,17 +76,17 @@ Lex::~Lex () {
 }
 TokenType getToken (string& category) {
   if (category == "VARIABLE") {
-    return VARIABLE;
+    return TokenType::VARIABLE;
   } else if (category == "KEYWORD") {
-    return KEYWORD;
+    return TokenType::KEYWORD;
   } else if (category == "SPACE") {
-    return SPACE;
+    return TokenType::SPACE;
   } else if (category == "INTEGER") {
-    return INTEGER;
+    return TokenType::INTEGER;
   } else if (category == "STRING") {
-    return STRING;
+    return TokenType::STRING;
   } else {
-    return UNKNOW;
+    return TokenType::UNKNOW;
   }
 }
 void Lex::addRE (string& re, string& category) {
@@ -139,7 +139,7 @@ Token* Lex::nextToken () {
             buf[count] = EMPTY;
           }
         }
-        if (item.second == SPACE) {
+        if (item.second == TokenType::SPACE) {
           return nextToken();
         }
         return new Token(item.second, lex);

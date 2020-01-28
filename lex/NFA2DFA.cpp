@@ -4,7 +4,6 @@
 #include <map>
 #include <algorithm>
 #include "lex.hpp"
-#include "../utils/utils.hpp"
 using namespace std;
 
 vector<FA::State*>* NFA2DFA::findQ (vector<State*>* q) {
@@ -107,18 +106,6 @@ FA::State* NFA2DFA::getEndState (State* start, char accept) {
     return (*it)->end;
   } else {
     return nullptr;
-  }
-}
-set<char> NFA2DFA::getAccept (State* start, State* end) {
-  auto it = find_if(
-      deltas.begin(), deltas.end(),
-      [&](Delta* item) {
-        return item->start == start && item->end == end;
-      });
-  if (it != deltas.end()) {
-    return (*it)->accept;
-  } else {
-    return set<char>();
   }
 }
 void NFA2DFA::print () {

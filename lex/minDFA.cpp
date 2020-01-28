@@ -1,6 +1,5 @@
 #include <iostream>
 #include <set>
-#include <map>
 #include <algorithm>
 #include <iterator>
 #include "lex.hpp"
@@ -68,7 +67,7 @@ minDFA::minDFA (NFA2DFA& dfa) {
   }
 
   Map M;
-  for (Set item : T) {
+  for (const Set& item : T) {
     State* s = newState();
     S.push_back(s);
     M[item] = s;
