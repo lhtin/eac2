@@ -88,3 +88,20 @@ void FA::print () {
   }
   cout << endl;
 }
+
+unordered_map<int, unordered_map<char, int>> FA::getDeltas () {
+  unordered_map<int, unordered_map<char, int>> d;
+  for (auto item : deltas) {
+    int start = item->start->n;
+    set<char> cs = item->accept;
+    int end = item->end->n;
+
+    if (d.find(start) == d.end()) {
+      d[start] = unordered_map<char, int>();
+    }
+    for (auto c : cs) {
+      d[start][c] = end;
+    }
+  }
+  return d;
+}

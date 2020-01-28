@@ -9,6 +9,7 @@
 #include <set>
 #include <queue>
 #include <map>
+#include <unordered_map>
 #include <fstream>
 #include <utility>
 using namespace std;
@@ -81,6 +82,7 @@ public:
   void addDelta (State* start, char accept, State* end);
   void addDelta (State* start, const set<char>& accept, State* end);
   State* newState ();
+  unordered_map<int, unordered_map<char, int>> getDeltas ();
 };
 
 //// RE2NFA
@@ -133,11 +135,16 @@ class WrapFA {
 private:
   FA* fa;
   FA::State* current;
+  unordered_map<int, unordered_map<char, int>> deltas;
+  int current2;
 public:
   explicit WrapFA (FA* fa);
   bool accept (char c);
   bool isFinish ();
   void reset ();
+  bool accept2 (char c);
+  bool isFinish2 ();
+  void reset2 ();
 };
 const int BUFFER_MAX = 1024;
 enum class TokenType {

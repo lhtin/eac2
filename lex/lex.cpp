@@ -1,7 +1,6 @@
 #include <string>
 #include <utility>
 #include <iostream>
-#include <fstream>
 #include <algorithm>
 #include <nlohmann/json.hpp>
 #include "lex.hpp"
@@ -9,7 +8,33 @@
 using namespace std;
 using namespace nlohmann;
 
-WrapFA::WrapFA (FA* fa): fa(fa), current(fa->s0) {}
+WrapFA::WrapFA (FA* fa): fa(fa), current(fa->s0), current2(fa->s0->n), deltas(fa->getDeltas()) {}
+bool WrapFA::accept2 (char c) {
+  auto it1 = deltas.find(current2);
+  if (it1 != deltas.end()) {
+    auto it2 = it1->second.find(c);
+    if (it2 != it1->second.end()) {
+      current2 = it2->second;
+      return true;
+    }
+  }
+  return false;
+}
+bool WrapFA::isFinish2 () {
+  auto it = find_if(
+      fa->SA.begin(), fa->SA.end(),
+      [&](FA::State* item) {
+        return item->n == current2;
+      });
+  if (it != fa->SA.end()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+void WrapFA::reset2 () {
+  current2 = fa->s0->n;
+}
 bool WrapFA::accept (char c) {
   auto it = find_if(
       fa->deltas.begin(), fa->deltas.end(),
