@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <fstream>
 #include <utility>
+#include "../spec/lex-spec.hpp"
+
 using namespace std;
 
 const char EMPTY = '\0';
@@ -146,15 +148,8 @@ public:
   bool isFinish2 ();
   void reset2 ();
 };
+
 const int BUFFER_MAX = 1024;
-enum class TokenType {
-  VARIABLE,
-  KEYWORD,
-  SPACE,
-  INTEGER,
-  STRING,
-  UNKNOW
-};
 
 class Token {
 public:
@@ -172,12 +167,10 @@ private:
   ifstream sourceFile;
 
 public:
-  Lex (string specPath, string sourcePath);
+  Lex (LexSpec specPath, string sourcePath);
   ~Lex ();
-  void addRE (string& re, string& category);
+  void addRE (string& re, TokenType type);
   Token* nextToken ();
 };
-
-
 
 #endif //EAC2_LEX_HPP

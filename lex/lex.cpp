@@ -2,11 +2,10 @@
 #include <utility>
 #include <iostream>
 #include <algorithm>
-#include <nlohmann/json.hpp>
 #include "lex.hpp"
+#include "../spec/lex-spec.hpp"
 
 using namespace std;
-using namespace nlohmann;
 
 WrapFA::WrapFA (FA* fa): fa(fa), current(fa->s0), current2(fa->s0->n), deltas(fa->getDeltas()) {}
 bool WrapFA::accept2 (char c) {
@@ -79,19 +78,14 @@ Token::Token (TokenType type, string lex): type(type), lex(lex) {
   }
 }
 
-Lex::Lex (string specPath, string sourcePath): at(0), buf(), sourceFile(sourcePath) {
-  ifstream spec(specPath, ios::binary);
-  if (spec.is_open() && sourceFile.is_open()) {
-    json lexSpec;
-    spec >> lexSpec;
-
+Lex::Lex (LexSpec lexSpec, string sourcePath): at(0), buf(), sourceFile(sourcePath) {
+  if (sourceFile.is_open()) {
     for (auto it = lexSpec.begin(); it != lexSpec.end(); it++) {
-      string re = (*it)["re"];
-      string category = (*it)["category"];
-      addRE(re, category);
+      string re = it->first;
+      TokenType type = it->second;
+      addRE(re, type);
     }
     sourceFile.read(buf, 2 * BUFFER_MAX);
-    spec.close();
   } else {
     cout << "cannot open" << endl;
   }
@@ -99,22 +93,8 @@ Lex::Lex (string specPath, string sourcePath): at(0), buf(), sourceFile(sourcePa
 Lex::~Lex () {
   sourceFile.close();
 }
-TokenType getToken (string& category) {
-  if (category == "VARIABLE") {
-    return TokenType::VARIABLE;
-  } else if (category == "KEYWORD") {
-    return TokenType::KEYWORD;
-  } else if (category == "SPACE") {
-    return TokenType::SPACE;
-  } else if (category == "INTEGER") {
-    return TokenType::INTEGER;
-  } else if (category == "STRING") {
-    return TokenType::STRING;
-  } else {
-    return TokenType::UNKNOW;
-  }
-}
-void Lex::addRE (string& re, string& category) {
+
+void Lex::addRE (string& re, TokenType type) {
   RETree tree(re);
 //  tree.print();
   RE2NFA nfa(tree.head);
@@ -123,7 +103,7 @@ void Lex::addRE (string& re, string& category) {
 //  dfa.print();
   minDFA* min = new minDFA(dfa);
 //  min->print();
-  list.push_back(pair<WrapFA, TokenType>(WrapFA(min), getToken(category)));
+  list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
 }
 Token* Lex::nextToken () {
   for (auto item : list) {
