@@ -1,7 +1,3 @@
-//
-// Created by 丁乐华 on 2020/2/6.
-//
-
 #ifndef EAC2_LEX_SPEC_H
 #define EAC2_LEX_SPEC_H
 
@@ -39,4 +35,4 @@ const LexSpec PL0_LEX_SPEC = {
     }
 };
 
-#endif //EAC2_LEX_SPEC_H
+#endif
