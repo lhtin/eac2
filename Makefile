@@ -1,24 +1,22 @@
 .PHONY: clean run
 
+LEX_SRC = lex.cpp RE.cpp FA.cpp RE2NFA.cpp NFA2DFA.cpp minDFA.cpp
+LEX_OBJS = ${LEX_SRC:%.cpp=lex/%.o}
+
+UTILS_SRC = utils.cpp
+UTILS_OBJS = ${UTILS_SRC:%.cpp=utils/%.o}
+
 run: main
 	./main
 
-main: main.cpp lex/lex.a utils/utils.a lex/lex.hpp utils/utils.hpp spec/lex-spec.hpp
-	clang++ -std=c++17 main.cpp lex/lex.a utils/utils.a -o main
+${LEX_OBJS}: %.o : %.cpp lex/lex.hpp spec/lex-spec.hpp
+	clang++ -std=c++17 -c $< -o $@
 
-LEX_SRC = RE.cpp FA.cpp RE2NFA.cpp NFA2DFA.cpp minDFA.cpp lex.cpp
-LEX_OBJS = ${LEX_SRC:%.cpp=%.o}
-lex/lex.a: ${LEX_SRC:%.cpp=lex/%.cpp} lex/lex.hpp spec/lex-spec.hpp
-	cd lex; \
-	clang++ -std=c++17 -c ${LEX_SRC}; \
-	ar cr lex.a ${LEX_OBJS}
+${UTILS_OBJS}: %.o : %.cpp utils/utils.hpp
+	clang++ -std=c++17 -c $< -o $@
 
-UTILS_SRC = utils.cpp
-UTILS_OBJS = ${UTILS_SRC:%.cpp=%.o}
-utils/utils.a: ${UTILS_SRC:%.cpp=utils/%.cpp} utils/utils.hpp
-	cd utils; \
-	clang++ -std=c++17 -c ${UTILS_SRC}; \
-	ar cr utils.a ${UTILS_OBJS}
+main: main.cpp ${LEX_OBJS} ${UTILS_OBJS} lex/lex.hpp utils/utils.hpp spec/lex-spec.hpp
+	clang++ -std=c++17 main.cpp ${LEX_OBJS} ${UTILS_OBJS} -o main
 
 clean:
 	rm -f main */*.o */*.a
