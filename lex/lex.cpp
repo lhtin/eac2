@@ -62,21 +62,6 @@ bool WrapFA::isFinish () {
 void WrapFA::reset () {
   current = fa->s0;
 }
-Token::Token (TokenType type, string lex): type(type), lex(lex) {
-  if (type == TokenType::VARIABLE) {
-    typeDesc = "VARIABLE";
-  } else if (type == TokenType::KEYWORD) {
-    typeDesc = "KEYWORD";
-  } else if (type == TokenType::SPACE) {
-    typeDesc = "SPACE";
-  } else if (type == TokenType::INTEGER) {
-    typeDesc = "INTEGER";
-  } else if (type == TokenType::STRING) {
-    typeDesc = "STRING";
-  } else {
-    typeDesc = "UNKNOW";
-  }
-}
 
 Lex::Lex (LexSpec lexSpec, string sourcePath): at(0), buf(), sourceFile(sourcePath) {
   if (sourceFile.is_open()) {
@@ -144,7 +129,7 @@ Token* Lex::nextToken () {
             buf[count] = EMPTY;
           }
         }
-        if (item.second == TokenType::SPACE) {
+        if (item.second == TokenType::space) {
           return nextToken();
         }
         return new Token(item.second, lex);

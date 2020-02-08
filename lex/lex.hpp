@@ -151,14 +151,6 @@ public:
 
 const int BUFFER_MAX = 1024;
 
-class Token {
-public:
-  string lex;
-  TokenType type;
-  string typeDesc;
-  Token (TokenType type, string lex);
-};
-
 class Lex {
 private:
   vector<pair<WrapFA, TokenType>> list;
