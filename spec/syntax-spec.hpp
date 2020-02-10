@@ -8,376 +8,39 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <tuple>
+#include <queue>
 #include <iterator>
-#include "lex-spec.hpp"
-#include "spec.hpp"
+#include "parentheses.hpp"
 
 using namespace std;
-
-enum class NonterminalSymbolType {
-  Program,
-  Block,
-  Assign,
-  AssignRest,
-  Declare,
-  DeclareRest,
-  Procedure,
-  Statement,
-  StatementRest,
-  Condition,
-  RelationOp,
-  Expression,
-  ExpressionRest,
-  Op1,
-  Term,
-  TermRest,
-  Op2,
-  Factor,
-  None
-};
-
-//template <SymbolType, NonterminalSymbolType, TokenType>
-//class Symbol {
-//public:
-//  SymbolType type;
-//  NonterminalSymbolType nt_type;
-//  TokenType t_type;
-//  string flex;
-//
-//  explicit Symbol(NonterminalSymbolType nt_type) : type(SymbolType::NON_TERMINAL_SYMBOL), nt_type(nt_type), t_type(TokenType::invalid), flex("") {}
-//
-//  explicit Symbol(TokenType t_type, string flex = "") : type(SymbolType::TERMINAL_SYMBOL), t_type(t_type), flex(flex), nt_type(NonterminalSymbolType::Invalid) {}
-//
-//  bool is (NonterminalSymbolType nt_type) {
-//    return type == SymbolType::NON_TERMINAL_SYMBOL && this->nt_type == nt_type;
-//  }
-//  bool is (TokenType t_type, string flex = "") {
-//    return type == SymbolType::TERMINAL_SYMBOL && this->t_type == t_type && this->flex == flex;
-//  }
-//  bool isNonterminalSymbol () const {
-//    return type == SymbolType::NON_TERMINAL_SYMBOL;
-//  }
-//  bool operator< (const Symbol& rhs) const {
-//    if (type < rhs.type) {
-//      return true;
-//    } else if (type == rhs.type) {
-//      if (nt_type < rhs.nt_type) {
-//        return true;
-//      } else if (nt_type == rhs.nt_type) {
-//        if (t_type < rhs.t_type) {
-//          return true;
-//        } else if (t_type == rhs.t_type) {
-//          return flex < rhs.flex;
-//        }
-//      }
-//    }
-//    return false;
-//  }
-//};
-
-using Symbol = Spec::Symbol<NonterminalSymbolType, TokenType>;
-using Production = Spec::Production<Symbol>;
-using ProductionList = Spec::ProductionList<Symbol>;
-using CFG = Spec::CFG<Symbol>;
-
-const CFG PL0_CFG{
-    {
-        Symbol(NonterminalSymbolType::Program),
-        {
-            {
-                Symbol(NonterminalSymbolType::Block),
-                Symbol(TokenType::keyword, ".")
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::Block),
-        {
-            {
-                Symbol(NonterminalSymbolType::Assign),
-                Symbol(NonterminalSymbolType::Declare),
-                Symbol(NonterminalSymbolType::Procedure),
-                Symbol(NonterminalSymbolType::Statement)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::Assign),
-        {
-            {
-                Symbol(TokenType::keyword, "const"),
-                Symbol(TokenType::ident),
-                Symbol(TokenType::keyword, "="),
-                Symbol(TokenType::number),
-                Symbol(NonterminalSymbolType::AssignRest)
-            },
-            {
-                Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::AssignRest),
-        {
-            {
-                Symbol(TokenType::keyword, ","),
-                Symbol(TokenType::ident),
-                Symbol(TokenType::keyword, "="),
-                Symbol(TokenType::number),
-                Symbol(NonterminalSymbolType::AssignRest)
-            },
-            {
-              Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-      Symbol(NonterminalSymbolType::Declare),
-        {
-            {
-              Symbol(TokenType::keyword, "var"),
-              Symbol(TokenType::ident),
-              Symbol(NonterminalSymbolType::DeclareRest),
-              Symbol(TokenType::keyword, ";")
-            },
-            {
-              Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::DeclareRest),
-        {
-            {
-              Symbol(TokenType::keyword, ","),
-              Symbol(TokenType::ident),
-              Symbol(NonterminalSymbolType::DeclareRest)
-            },
-            {
-              Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-      Symbol(NonterminalSymbolType::Procedure),
-          {
-              {
-                  Symbol(TokenType::keyword, "procedure"),
-                  Symbol(TokenType::ident),
-                  Symbol(TokenType::keyword, ";"),
-                  Symbol(NonterminalSymbolType::Block),
-                  Symbol(TokenType::keyword, ";"),
-                  Symbol(NonterminalSymbolType::Procedure)
-              },
-              {
-                  Symbol(TokenType::epsilon)
-              }
-          }
-    },
-    {
-        Symbol(NonterminalSymbolType::Statement),
-        {
-            {
-              Symbol(TokenType::ident),
-                Symbol(TokenType::keyword, ":="),
-                Symbol(NonterminalSymbolType::Expression)
-            },
-            {
-                Symbol(TokenType::keyword, "call"),
-                Symbol(TokenType::ident)
-            },
-            {
-                Symbol(TokenType::keyword, "?"),
-                Symbol(TokenType::ident)
-            },
-            {
-                Symbol(TokenType::keyword, "!"),
-                Symbol(NonterminalSymbolType::Expression)
-            },
-            {
-                Symbol(TokenType::keyword, "begin"),
-                Symbol(NonterminalSymbolType::Statement),
-                Symbol(NonterminalSymbolType::StatementRest),
-                Symbol(TokenType::keyword, "end")
-            },
-            {
-                Symbol(TokenType::keyword, "if"),
-                Symbol(NonterminalSymbolType::Condition),
-                Symbol(TokenType::keyword, "then"),
-                Symbol(NonterminalSymbolType::Statement)
-            },
-            {
-                Symbol(TokenType::keyword, "while"),
-                Symbol(NonterminalSymbolType::Condition),
-                Symbol(TokenType::keyword, "do"),
-                Symbol(NonterminalSymbolType::Statement)
-            },
-            {
-                Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::StatementRest),
-        {
-            {
-                Symbol(TokenType::keyword, ";"),
-                Symbol(NonterminalSymbolType::Statement),
-                Symbol(NonterminalSymbolType::StatementRest)
-            },
-            {
-                Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::Condition),
-        {
-            {
-                Symbol(TokenType::keyword, "odd"),
-                Symbol(NonterminalSymbolType::Expression)
-            },
-            {
-                Symbol(NonterminalSymbolType::Expression),
-                Symbol(NonterminalSymbolType::RelationOp),
-                Symbol(NonterminalSymbolType::Expression),
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::RelationOp),
-        {
-            {
-                Symbol(TokenType::keyword, "=")
-            },
-            {
-                Symbol(TokenType::keyword, "#")
-            },
-            {
-                Symbol(TokenType::keyword, "<")
-            },
-            {
-                Symbol(TokenType::keyword, "<=")
-            },
-            {
-                Symbol(TokenType::keyword, ">")
-            },
-            {
-                Symbol(TokenType::keyword, ">=")
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::Expression),
-        {
-            {
-                Symbol(NonterminalSymbolType::Term),
-                Symbol(NonterminalSymbolType::ExpressionRest)
-            },
-            {
-                Symbol(NonterminalSymbolType::Op1),
-                Symbol(NonterminalSymbolType::Term),
-                Symbol(NonterminalSymbolType::ExpressionRest)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::ExpressionRest),
-        {
-            {
-                Symbol(NonterminalSymbolType::Op1),
-                Symbol(NonterminalSymbolType::Term),
-                Symbol(NonterminalSymbolType::ExpressionRest)
-            },
-            {
-                Symbol(TokenType::epsilon)
-            }
-        }
-    },
-    {
-      Symbol(NonterminalSymbolType::Op1),
-          {
-              {
-                  Symbol(TokenType::keyword, "+")
-              },
-              {
-                  Symbol(TokenType::keyword, "-")
-              }
-          }
-    },
-    {
-      Symbol(NonterminalSymbolType::Term),
-          {
-              {
-                  Symbol(NonterminalSymbolType::Factor),
-                  Symbol(NonterminalSymbolType::TermRest)
-              }
-          }
-    },
-    {
-      Symbol(NonterminalSymbolType::TermRest),
-          {
-              {
-                  Symbol(NonterminalSymbolType::Op2),
-                  Symbol(NonterminalSymbolType::Factor),
-                  Symbol(NonterminalSymbolType::TermRest)
-              },
-              {
-                  Symbol(TokenType::epsilon)
-              }
-          }
-    },
-    {
-      Symbol(NonterminalSymbolType::Op2),
-          ProductionList {
-              Production {
-                  Symbol(TokenType::keyword, "*")
-              },
-              Production {
-                  Symbol(TokenType::keyword, "/")
-              }
-          }
-    },
-    {
-      Symbol(NonterminalSymbolType::Factor),
-          {
-              {
-                  Symbol(TokenType::ident)
-              },
-              {
-                  Symbol(TokenType::number)
-              },
-              {
-                  Symbol(TokenType::keyword, "("),
-                  Symbol(NonterminalSymbolType::Expression),
-                  Symbol(TokenType::keyword, ")")
-              }
-          }
-    }
-};
 
 using LR1Item = Spec::LR1Item<Symbol>;
 using LR1CC = set<LR1Item>;
 using SetSymbol = set<Symbol>;
 using First = set<Symbol>;
 
+template <typename WrapLex>
 class LR1 {
 private:
   CFG cfg;
   map<Symbol, set<Symbol>> firstAll;
   Symbol epsilon;
 public:
-  LR1 (CFG cfg, NonterminalSymbolType start, Lex& lex): cfg(cfg), firstAll(), epsilon(TokenType::epsilon) {
+  LR1 (CFG cfg, NonterminalSymbolType start, WrapLex& lex): cfg(cfg), firstAll(), epsilon(Spec::SymbolType::EPSILON) {
     initAllFirst();
 
     Symbol goal(start);
     ProductionList list = cfg[goal];
     LR1CC cc0;
-    SetSymbol s{goal};
     for (const Production& item : list) {
-      cc0.insert(LR1Item{goal, item, 0, Symbol(TokenType::eof)});
+      cc0.insert(LR1Item{goal, item, 0, Symbol(SymbolType::END_OF_FILE)});
     }
-    closure(cc0, s);
+    closure(cc0);
+
+    set<LR1CC> c;
+    c.insert(cc0);
+//    spread(c, cc0);
+    int a = 1;
   }
   void initAllFirst () {
     set<Symbol> es;
@@ -425,45 +88,101 @@ public:
   Symbol getNextSymbol (const LR1Item& item) {
     const Production& p = item.p;
     int index = item.pos;
-    if (index < p.size() - 1) {
+    if (index < p.size()) {
       return p[index];
     } else {
-      return Symbol(NonterminalSymbolType::None);
+      return Symbol(Spec::SymbolType::NONE);
     }
   }
-  First getFirst (Production& rest, Symbol& a) {
+  Production getRest (const LR1Item& item, int n = 0) {
+    Production r;
+    for (int i = item.pos + n; i < item.p.size(); i += 1) {
+      r.push_back(item.p[i]);
+    }
+    return r;
+  }
+  First getFirst (const Production& rest, const Symbol& a) {
     First f;
     bool isAll = true;
     for (const Symbol& s : rest) {
       if (s.isNonterminalSymbol()) {
         First t = firstAll[s];
+        f.insert(t.begin(), t.end());
         if (t.find(epsilon) == t.end()) {
-
+          isAll = false;
+          break;
         }
+      } else if (s.isTerminalSymbol()) {
+        f.insert(s);
+        isAll = false;
+        break;
       }
     }
+    if (isAll) {
+      f.erase(epsilon);
+      f.insert(a);
+    }
+    return f;
   }
-  void closure (LR1CC& c, SetSymbol& s) {
-    int count;
-    do {
-      count = s.size();
-      for (const LR1Item& item : c) {
-        Symbol nextSymbol = getNextSymbol(item);
-        if (
-            nextSymbol.isNonterminalSymbol() &&
-            !nextSymbol.is(NonterminalSymbolType::None) &&
-            s.find(nextSymbol) == s.end()) {
-          s.insert(nextSymbol);
-          ProductionList ps = cfg[nextSymbol];
-          LR1CC c2;
-          for (const Production& p : ps) {
-            c2.insert(LR1Item{nextSymbol, p, 0, })
+  void closure (LR1CC& c, const LR1Item& item) {
+
+  }
+  void closure (LR1CC& c) {
+    vector<LR1Item> workList(c.begin(), c.end());
+    auto it = workList.begin();
+    while (it != workList.end()) {
+      const LR1Item& item = *it;
+      Symbol nextSymbol = getNextSymbol(item);
+      if (nextSymbol.isNonterminalSymbol()) {
+        Production rest = getRest(item, 1);
+        First first = getFirst(rest, item.t);
+        ProductionList ps = cfg[nextSymbol];
+        for (const Production& p : ps) {
+          for (const Symbol& a : first) {
+            LR1Item t = LR1Item{nextSymbol, p, 0, a};
+            if (c.find(t) == c.end()) {
+              c.insert(t);
+              workList.push_back(t);
+            }
           }
         }
       }
-
-    } while (s.size() != count);
+      it++;
+    }
   }
+  LR1CC goNext (const LR1CC& s, const Symbol& x) {
+    LR1CC moved;
+    for (const LR1Item& item : s) {
+      Symbol ns = getNextSymbol(item);
+      if (ns == x) {
+        moved.insert(LR1Item(item.nt, item.p, item.pos + 1, item.t));
+      }
+    }
+    return closure(moved);
+  }
+//  void spread (set<LR1CC>& c, const LR1CC& s) {
+//    map<Symbol, LR1CC> cc;
+//    map<Symbol, SetSymbol> ms;
+//    for (const LR1Item& item : s) {
+//      const Symbol& x = getNextSymbol(item);
+//      if (x.isValid()) {
+//        if (cc.find(x) == cc.end()) {
+//          cc[x] = LR1CC();
+//          ms[x] = SetSymbol();
+//        }
+//        cc[x].insert(LR1Item(item.nt, item.p, item.pos + 1, item.t));
+//        closure(item.second);
+//        ms[x].insert(item.nt);
+//      }
+//    }
+//    for (auto& item : cc) {
+//      closure(item.second);
+//      if (c.find(item.second) == c.end()) {
+//        c.insert(item.second);
+//        spread(c, item.second);
+//      }
+//    }
+//  }
 //  CC goNext (CC& s, Symbol a) {
 //
 //  }
@@ -478,7 +197,7 @@ public:
 //          ProductionList pl = cfg[item];
 //
 //        } else {
-//          if (item.is(TokenType::epsilon)) {
+//          if (item.is(TerminalSymbolType::epsilon)) {
 //            continue;
 //          } else {
 //            a.insert(item);

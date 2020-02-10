@@ -12,7 +12,6 @@
 #include <unordered_map>
 #include <fstream>
 #include <utility>
-#include "../spec/lex-spec.hpp"
 
 using namespace std;
 
@@ -151,7 +150,8 @@ public:
 
 const int BUFFER_MAX = 1024;
 
-class Lex {
+template <typename TokenType, typename Token, typename Lex>
+class WrapLex {
 private:
   vector<pair<WrapFA, TokenType>> list;
   char buf[BUFFER_MAX * 2];
@@ -159,10 +159,88 @@ private:
   ifstream sourceFile;
 
 public:
-  Lex (LexSpec specPath, string sourcePath);
-  ~Lex ();
-  void addRE (string& re, TokenType type);
-  Token* nextToken ();
+  WrapLex (Lex lexSpec, string sourcePath): at(0), buf(), sourceFile(sourcePath) {
+    if (sourceFile.is_open()) {
+      for (auto it = lexSpec.begin(); it != lexSpec.end(); it++) {
+        string re = it->first;
+        TokenType type = it->second;
+        addRE(re, type);
+      }
+      sourceFile.read(buf, 2 * BUFFER_MAX);
+    } else {
+      cout << "cannot open" << endl;
+    }
+  }
+
+  ~WrapLex () {
+    sourceFile.close();
+  }
+
+  void addRE (string& re, TokenType type) {
+    RETree tree(re);
+  tree.print();
+    RE2NFA nfa(tree.head);
+  nfa.print();
+    NFA2DFA dfa(nfa);
+  dfa.print();
+    minDFA* min = new minDFA(dfa);
+//  min->print();
+    list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
+  }
+
+  Token* nextToken () {
+    for (auto item : list) {
+      WrapFA& wfa = item.first;
+      string lex;
+      int start = at;
+      char c = buf[at];
+      int len = 0;
+      if (c == EMPTY) {
+        break;
+      }
+      while (c != EMPTY && wfa.accept(c)) {
+        lex += c;
+        len += 1;
+        if (len > BUFFER_MAX) {
+          cout << "token 过长" << endl;
+          break;
+        }
+        at = (at + 1) % (2 * BUFFER_MAX);
+        c = buf[at];
+      }
+      bool isFinish = wfa.isFinish();
+      wfa.reset();
+      if (len > BUFFER_MAX) {
+        at = start;
+      } else {
+        if (isFinish) {
+          if (at < BUFFER_MAX && len > at) {
+            sourceFile.read(buf + BUFFER_MAX, BUFFER_MAX);
+            int count = sourceFile.gcount();
+            if (count < BUFFER_MAX) {
+              buf[BUFFER_MAX + count] = EMPTY;
+            }
+          } else if (at >= BUFFER_MAX && at - len < BUFFER_MAX) {
+            sourceFile.read(buf, BUFFER_MAX);
+            int count = sourceFile.gcount();
+            if (count < BUFFER_MAX) {
+              buf[count] = EMPTY;
+            }
+          }
+          if (item.second == TokenType::space) {
+            return nextToken();
+          }
+          return new Token(item.second, lex);
+        } else if (c == EMPTY) {
+          cout << "源码结束但是解析未完成" << endl;
+          break;
+        } else {
+          at = start;
+        }
+      }
+    }
+    return nullptr;
+  }
 };
 
 #endif //EAC2_LEX_HPP

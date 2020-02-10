@@ -16,7 +16,7 @@ ${UTILS_OBJS}: %.o : %.cpp utils/utils.hpp
 	clang++ -std=c++17 -c $< -o $@
 
 main: main.cpp ${LEX_OBJS} ${UTILS_OBJS} lex/lex.hpp utils/utils.hpp spec/lex-spec.hpp
-	clang++ -std=c++17 main.cpp ${LEX_OBJS} ${UTILS_OBJS} -o main
+	clang++ -std=c++17 main.cpp ${LEX_OBJS} ${UTILS_OBJS} -o main -v
 
 clean:
 	rm -f main */*.o */*.a

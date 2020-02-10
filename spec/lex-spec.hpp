@@ -4,6 +4,8 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include "spec.hpp"
+
 using namespace std;
 
 enum class TokenType {
@@ -11,14 +13,13 @@ enum class TokenType {
   keyword,
   space,
   number,
-  invalid,
   eof,
   epsilon
 };
 
-using LexSpec = vector<pair<string, TokenType>>;
+using Lex = Spec::Lex<TokenType>;
 
-const LexSpec PL0_LEX_SPEC = {
+const WrapLex PL0_LEX_SPEC = {
     {
         "const|var|procedure|call|begin|end|while|do|odd|if|=|,|;|:=|?|!|#|<|<=|>|>=|\\+|-|\\*|/|\\(|\\)|.",
         TokenType::keyword

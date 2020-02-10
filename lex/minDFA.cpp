@@ -56,37 +56,40 @@ minDFA::minDFA (NFA2DFA& dfa) {
   set_difference(all.begin(), all.end(), DA.begin(), DA.end(), inserter(Rest, Rest.begin()));
 
   T.insert(DA);
-  T.insert(Rest);
-  while (P.size() != T.size()) {
-    P = T;
-    T = SetSet();
-    for (const Set& p : P) {
-      SetSet temp = split(P, p, dfa);
-      T.insert(temp.begin(), temp.end());
+
+  if (!Rest.empty()) {
+    T.insert(Rest);
+    while (P.size() != T.size()) {
+      P = T;
+      T = SetSet();
+      for (const Set &p : P) {
+        SetSet temp = split(P, p, dfa);
+        T.insert(temp.begin(), temp.end());
+      }
     }
   }
 
   Map M;
+  Set SA;
   for (const Set& item : T) {
     State* s = newState();
     S.push_back(s);
     M[item] = s;
+    if (item.count(dfa.s0) > 0) {
+      s0 = s;
+    }
+    Set inter;
+    set_intersection(dfa.SA.begin(), dfa.SA.end(), item.begin(), item.end(), inserter(inter, inter.begin()), compare);
+    if (!inter.empty()) {
+      SA.insert(s);
+    }
   }
 
-  Set SA;
   for (Delta* item : dfa.deltas) {
     Set t1 = findP(item->start, T);
     State* start = M[t1];
-    if (t1.count(dfa.s0) > 0) {
-      s0 = start;
-    }
     Set t2 = findP(item->end, T);
     State* end = M[t2];
-    Set inter;
-    set_intersection(dfa.SA.begin(), dfa.SA.end(), t2.begin(), t2.end(), inserter(inter, inter.begin()), compare);
-    if (!inter.empty()) {
-      SA.insert(end);
-    }
     deltas.push_back(new Delta(start, item->accept, end));
   }
   this->SA = vector<State*>(SA.begin(), SA.end());

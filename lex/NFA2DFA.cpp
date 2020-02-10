@@ -20,6 +20,10 @@ vector<FA::State*>* NFA2DFA::findQ (vector<State*>* q) {
 
 void NFA2DFA::spread (vector<State*>* q) {
   for (char c : nfa->chars) {
+    if (c == EMPTY) {
+      // 忽略epsilon
+      continue;
+    }
     vector<State*>* t = closure(q, c);
     if (t->empty()) {
       continue;
