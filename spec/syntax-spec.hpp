@@ -8,9 +8,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <tuple>
-#include <queue>
+#include <deque>
 #include <iterator>
-#include "parentheses.hpp"
+#include "pl0.hpp"
 
 using namespace std;
 
@@ -19,28 +19,97 @@ using LR1CC = set<LR1Item>;
 using SetSymbol = set<Symbol>;
 using First = set<Symbol>;
 
+using Node = Spec::AST<Symbol>::Node;
+using Key = pair<int, Symbol>;
+
 template <typename WrapLex>
 class LR1 {
 private:
   CFG cfg;
   map<Symbol, set<Symbol>> firstAll;
   Symbol epsilon;
+  Symbol Goal;
+
+  map<Key, int> Shift;
+  map<Key, LR1Item> Reduce;
+  map<Key, int> Goto;
+  map<LR1CC, int> CC2S;
+  WrapLex& lex;
+  int s0;
+
+  int id;
+
 public:
-  LR1 (CFG cfg, NonterminalSymbolType start, WrapLex& lex): cfg(cfg), firstAll(), epsilon(Spec::SymbolType::EPSILON) {
+  LR1 (CFG cfg, NonterminalSymbolType start, WrapLex& lex):
+    cfg(cfg),
+    firstAll(),
+    Goal(start),
+    epsilon(SymbolType::EPSILON),
+    id(0),
+    lex(lex) {
     initAllFirst();
 
-    Symbol goal(start);
-    ProductionList list = cfg[goal];
+    ProductionList list = cfg[Goal];
     LR1CC cc0;
     for (const Production& item : list) {
-      cc0.insert(LR1Item{goal, item, 0, Symbol(SymbolType::END_OF_FILE)});
+      cc0.insert(makeLR1Item(Goal, item, 0, Symbol(TerminalSymbolType::eof)));
     }
     closure(cc0);
 
-    set<LR1CC> c;
-    c.insert(cc0);
-//    spread(c, cc0);
-    int a = 1;
+    addReduce(cc0);
+
+    set<LR1CC> cc;
+    cc.insert(cc0);
+    CC2S[cc0] = getNewState();
+    s0 = CC2S[cc0];
+    spread(cc, cc0);
+  }
+  Node getAST () {
+    Symbol word = lex.nextToken();
+    stack<int> states;
+    stack<Node> symbols;
+    states.push(s0);
+    while (true) {
+      int state = states.top();
+      Symbol pure = getPureSymbol(word);
+      if (Shift.find(Key{state, pure}) != Shift.end()) {
+        auto it = Shift.find(Key{state, pure});
+        states.push(it->second);
+        symbols.push(Node(word));
+        word = lex.nextToken();
+      } else if (Reduce.find(Key{state, pure}) != Reduce.end()) {
+        auto it = Reduce.find(Key{state, pure});
+        Production p = it->second.p;
+        Symbol nt = it->second.nt;
+        Node parent(nt);
+        for (auto& it1 : p) {
+          if (!it1.isEpsilon()) {
+            parent.addChild(symbols.top());
+            symbols.pop();
+            states.pop();
+          }
+        }
+        symbols.push(parent);
+        states.push(Goto[Key{states.top(), nt}]);
+        if (nt == Goal) {
+          // 构建成功
+          return parent;
+        }
+      } else {
+        return Node(Symbol(SymbolType::NONE));
+      }
+    }
+  }
+  int getNewState () {
+    int state = id;
+    id += 1;
+    return state;
+  }
+  LR1Item makeLR1Item (const Symbol& nt, const Production& p, int pos, const Symbol& t) {
+    while (pos < p.size() && p[pos] == epsilon) {
+      pos += 1;
+    }
+    return LR1Item{nt, p, pos, t};
   }
   void initAllFirst () {
     set<Symbol> es;
@@ -91,7 +160,7 @@ public:
     if (index < p.size()) {
       return p[index];
     } else {
-      return Symbol(Spec::SymbolType::NONE);
+      return Symbol(SymbolType::NONE);
     }
   }
   Production getRest (const LR1Item& item, int n = 0) {
@@ -124,22 +193,19 @@ public:
     }
     return f;
   }
-  void closure (LR1CC& c, const LR1Item& item) {
-
-  }
   void closure (LR1CC& c) {
-    vector<LR1Item> workList(c.begin(), c.end());
+    deque<LR1Item> workList(c.begin(), c.end());
     auto it = workList.begin();
-    while (it != workList.end()) {
-      const LR1Item& item = *it;
+    while (!workList.empty()) {
+      const LR1Item& item = workList.front();
       Symbol nextSymbol = getNextSymbol(item);
       if (nextSymbol.isNonterminalSymbol()) {
-        Production rest = getRest(item, 1);
+        const Production& rest = getRest(item, 1);
         First first = getFirst(rest, item.t);
         ProductionList ps = cfg[nextSymbol];
         for (const Production& p : ps) {
           for (const Symbol& a : first) {
-            LR1Item t = LR1Item{nextSymbol, p, 0, a};
+            LR1Item t = makeLR1Item(nextSymbol, p, 0, a);
             if (c.find(t) == c.end()) {
               c.insert(t);
               workList.push_back(t);
@@ -147,88 +213,65 @@ public:
           }
         }
       }
-      it++;
+      workList.pop_front();
     }
   }
-  LR1CC goNext (const LR1CC& s, const Symbol& x) {
-    LR1CC moved;
+  void addReduce (const LR1CC& s) {
+    int state = CC2S[s];
     for (const LR1Item& item : s) {
-      Symbol ns = getNextSymbol(item);
-      if (ns == x) {
-        moved.insert(LR1Item(item.nt, item.p, item.pos + 1, item.t));
+      if (item.pos == item.p.size()) {
+        Reduce.emplace(Key{state, item.t}, item);
       }
     }
-    return closure(moved);
   }
-//  void spread (set<LR1CC>& c, const LR1CC& s) {
-//    map<Symbol, LR1CC> cc;
-//    map<Symbol, SetSymbol> ms;
-//    for (const LR1Item& item : s) {
-//      const Symbol& x = getNextSymbol(item);
-//      if (x.isValid()) {
-//        if (cc.find(x) == cc.end()) {
-//          cc[x] = LR1CC();
-//          ms[x] = SetSymbol();
-//        }
-//        cc[x].insert(LR1Item(item.nt, item.p, item.pos + 1, item.t));
-//        closure(item.second);
-//        ms[x].insert(item.nt);
-//      }
-//    }
-//    for (auto& item : cc) {
-//      closure(item.second);
-//      if (c.find(item.second) == c.end()) {
-//        c.insert(item.second);
-//        spread(c, item.second);
-//      }
-//    }
-//  }
-//  CC goNext (CC& s, Symbol a) {
-//
-//  }
+  void spread (set<LR1CC>& cc, const LR1CC& s) {
+    set<Key> ShiftT;
+    map<Symbol, set<LR1Item>> ReduceT;
+    set<Key> GotoT;
+    int state = CC2S[s];
 
-//  Production first (Production& s) {
-//    set<Symbol> a;
-//    int count;
-//    do {
-//      count = a.size();
-//      for (Symbol& item : s) {
-//        if (item.isNonterminalSymbol()) {
-//          ProductionList pl = cfg[item];
-//
-//        } else {
-//          if (item.is(TerminalSymbolType::epsilon)) {
-//            continue;
-//          } else {
-//            a.insert(item);
-//            break;
-//          }
-//        }
-//      }
-//    } while (a.size() != count);
-//  }
+    map<Symbol, LR1CC> mc;
+    for (const LR1Item& item : s) {
+      const Symbol& x = getNextSymbol(item);
+      if (x.isValid()) {
+        if (mc.find(x) == mc.end()) {
+          mc[x] = LR1CC();
+        }
+        LR1Item t = LR1Item(item.nt, item.p, item.pos + 1, item.t);
+        mc[x].insert(t);
+        if (t.p.size() == t.pos) {
+          if (ReduceT.find(x) == ReduceT.end()) {
+            ReduceT[x] = set<LR1Item>();
+          }
+          ReduceT[x].insert(t);
+        }
+
+        if (x.isTerminalSymbol()) {
+          ShiftT.emplace(state, x);
+        } else {
+          GotoT.emplace(state, x);
+        }
+      }
+    }
+    for (auto& item : mc) {
+      closure(item.second);
+      LR1CC s2 = item.second;
+      if (cc.find(s2) == cc.end()) {
+        CC2S[s2] = getNewState();
+        cc.insert(s2);
+
+        addReduce(s2);
+        spread(cc, s2);
+      }
+      int state2 = CC2S[s2];
+      Key k1 = Key{state, item.first};
+      if (ShiftT.find(k1) != ShiftT.end()) {
+        Shift.emplace(k1, state2);
+      } else if (GotoT.find(k1) != GotoT.end()) {
+        Goto.emplace(k1, state2);
+      }
+    }
+  }
 };
-
-/*
-A -> A a
-  | e
-  F(A) = {}
-  F(a) = {a}
-  F(e) = {e)}
-  1
-A -> A a
-rhs = F(A) - {e} = {}
-F(A) = {}
-2
-A -> e
-rhs = F(e) - {e} = {}
-rhs = rhs + {e}
-F(A) = {e}
-3
-A -> A a
-rhs = F(A) - {e} = {}
-rhs = rhs + {a};
-F(A) = {e, a}
-*/
 
 #endif

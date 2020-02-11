@@ -8,49 +8,16 @@
 
 using namespace std;
 
-//// lex
+using SymbolType = Spec::SymbolType;
 
 enum class TerminalSymbolType {
   ident,
   keyword,
   space,
-  number
+  number,
+  none,
+  eof
 };
-
-const map<TerminalSymbolType, string> TokenDesc{
-    {TerminalSymbolType::ident,   "ident"},
-    {TerminalSymbolType::keyword, "keyword"},
-    {TerminalSymbolType::space,   "space"},
-    {TerminalSymbolType::number,  "number"}
-};
-
-using Lex = Spec::Lex<TerminalSymbolType>;
-
-template class Spec::Token<TerminalSymbolType>;
-
-using Token = Spec::Token<TerminalSymbolType>;
-
-template <typename TerminalSymbolType>
-map<TerminalSymbolType, string> Spec::Token<TerminalSymbolType>::desc = {
-    {
-        R"(const|var|procedure|call|begin|end|while|do|odd|if|=|,|;|:=|?|!|#|<|<=|>|>=|\+|-|\*|/|\(|\)|.)",
-        TerminalSymbolType::keyword
-    },
-    {
-        "[a-zA-Z_][a-zA-Z_0-9]*",
-        TerminalSymbolType::ident
-    },
-    {
-        "[0-9]+",
-        TerminalSymbolType::number
-    },
-    {
-        "[ \n\t]+",
-        TerminalSymbolType::space
-    }
-};
-
-//// syntax
 
 enum class NonterminalSymbolType {
   Program,
@@ -74,10 +41,113 @@ enum class NonterminalSymbolType {
   None
 };
 
+const map<TerminalSymbolType, string> TokenDesc{
+    {TerminalSymbolType::ident,   "ident"},
+    {TerminalSymbolType::keyword, "keyword"},
+    {TerminalSymbolType::space,   "space"},
+    {TerminalSymbolType::number,  "number"}
+};
+
+template <typename NonterminalSymbolType, typename TerminalSymbolType>
+map<TerminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::TerminalDesc = {
+    {TerminalSymbolType::ident,   "ident"},
+    {TerminalSymbolType::keyword, "keyword"},
+    {TerminalSymbolType::space,   "space"},
+    {TerminalSymbolType::number,  "number"},
+    {TerminalSymbolType::eof,  "eof"},
+    {TerminalSymbolType::none,  "none"}
+};
+
+template <typename NonterminalSymbolType, typename TerminalSymbolType>
+map<NonterminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::NonterminalDesc = {
+
+};
+
 using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
+
+Symbol getPureSymbol (const Symbol& a) {
+  if (a.type == SymbolType::TERMINAL_SYMBOL && (a.t_type == TerminalSymbolType::ident || a.t_type == TerminalSymbolType::number)) {
+    return Symbol(a.t_type);
+  }
+  return a;
+}
+
+using Lex = Spec::Lex<TerminalSymbolType>;
+
+const Lex PL0_LEX{
+    {
+        R"(const|var|procedure|call|begin|end|while|do|odd|if|then|=|,|;|:=|?|!|#|<|<=|>|>=|\+|-|\*|/|\(|\)|.)",
+        TerminalSymbolType::keyword
+    },
+    {
+        "[a-zA-Z_][a-zA-Z_0-9]*",
+        TerminalSymbolType::ident
+    },
+    {
+        "[0-9]+",
+        TerminalSymbolType::number
+    },
+    {
+        "[ \n\t]+",
+        TerminalSymbolType::space
+    }
+};
+
 using Production = Spec::Production<Symbol>;
 using ProductionList = Spec::ProductionList<Symbol>;
 using CFG = Spec::CFG<Symbol>;
+/*
+const CFG PL0_CFG{
+    {
+        Symbol(NonterminalSymbolType::Program),
+        {
+            {
+                Symbol(NonterminalSymbolType::Block),
+                Symbol(TerminalSymbolType::keyword, ".")
+            }
+        }
+    },
+    {
+        Symbol(NonterminalSymbolType::Block),
+        {
+            {
+                Symbol(NonterminalSymbolType::Assign)
+            }
+        }
+    },
+    {
+        Symbol(NonterminalSymbolType::Assign),
+        {
+            {
+                Symbol(TerminalSymbolType::keyword, "const"),
+                Symbol(TerminalSymbolType::ident),
+                Symbol(TerminalSymbolType::keyword, "="),
+                Symbol(TerminalSymbolType::number),
+                Symbol(NonterminalSymbolType::AssignRest),
+                Symbol(TerminalSymbolType::keyword, ";")
+            },
+            {
+                Symbol(SymbolType::EPSILON)
+            }
+        }
+    },
+    {
+        Symbol(NonterminalSymbolType::AssignRest),
+        {
+            {
+                Symbol(TerminalSymbolType::keyword, ","),
+                Symbol(TerminalSymbolType::ident),
+                Symbol(TerminalSymbolType::keyword, "="),
+                Symbol(TerminalSymbolType::number),
+                Symbol(NonterminalSymbolType::AssignRest)
+            },
+            {
+                Symbol(SymbolType::EPSILON)
+            }
+        }
+    }
+};
+ */
 
 const CFG PL0_CFG{
     {
@@ -108,10 +178,11 @@ const CFG PL0_CFG{
                 Symbol(TerminalSymbolType::ident),
                 Symbol(TerminalSymbolType::keyword, "="),
                 Symbol(TerminalSymbolType::number),
-                Symbol(NonterminalSymbolType::AssignRest)
+                Symbol(NonterminalSymbolType::AssignRest),
+                Symbol(TerminalSymbolType::keyword, ";")
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -126,7 +197,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::AssignRest)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -140,7 +211,7 @@ const CFG PL0_CFG{
                 Symbol(TerminalSymbolType::keyword, ";")
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -153,7 +224,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::DeclareRest)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -169,7 +240,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::Procedure)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -212,7 +283,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::Statement)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -225,7 +296,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::StatementRest)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -289,7 +360,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::ExpressionRest)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },
@@ -322,7 +393,7 @@ const CFG PL0_CFG{
                 Symbol(NonterminalSymbolType::TermRest)
             },
             {
-                Symbol(TerminalSymbolType::epsilon)
+                Symbol(SymbolType::EPSILON)
             }
         }
     },

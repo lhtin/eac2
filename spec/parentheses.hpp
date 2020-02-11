@@ -10,27 +10,41 @@ using namespace std;
 
 using SymbolType = Spec::SymbolType;
 
-//// lex
-
 enum class TerminalSymbolType {
   keyword,
   space,
+  eof,
   none
 };
 
-template class Spec::Token<TerminalSymbolType>;
-using Token = Spec::Token<TerminalSymbolType>;
-
-template <typename TerminalSymbolType>
-map<TerminalSymbolType, string> Spec::Token<TerminalSymbolType>::desc = {
-    {TerminalSymbolType::keyword, "keyword"}
+enum class NonterminalSymbolType {
+  Goal,
+  List,
+  Pair,
+  None
 };
 
-using Lex = Spec::Lex<TerminalSymbolType>;
+template <typename NonterminalSymbolType, typename TerminalSymbolType>
+map<TerminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::TerminalDesc = {
+    {TerminalSymbolType::keyword, "keyword"},
+    {TerminalSymbolType::space, "space"},
+    {TerminalSymbolType::eof, "eof"}
+};
 
+template <typename NonterminalSymbolType, typename TerminalSymbolType>
+map<NonterminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::NonterminalDesc = {
+    {NonterminalSymbolType::Goal, "Goal"},
+    {NonterminalSymbolType::List, "List"},
+    {NonterminalSymbolType::Pair, "Pair"}
+};
+
+using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
+
+// lex
+using Lex = Spec::Lex<TerminalSymbolType>;
 const Lex parentheses_lex = {
     {
-        R"((|))",
+        R"(\(|\))",
         TerminalSymbolType::keyword
     },
     {
@@ -39,19 +53,10 @@ const Lex parentheses_lex = {
     }
 };
 
-//// syntax
-
-enum class NonterminalSymbolType {
-  Goal,
-  List,
-  Pair,
-  None
-};
-using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
+// syntax
 using Production = Spec::Production<Symbol>;
 using ProductionList = Spec::ProductionList<Symbol>;
 using CFG = Spec::CFG<Symbol>;
-
 const CFG parentheses_cfg{
     {
         Symbol(NonterminalSymbolType::Goal),

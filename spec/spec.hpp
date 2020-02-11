@@ -8,35 +8,19 @@
 using namespace std;
 
 namespace Spec {
-
-  template <typename TerminalSymbolType>
-  using Lex = vector<pair<string, TerminalSymbolType>>;
-
-  template <typename TerminalSymbolType>
-  class Token {
-  public:
-    static map<TerminalSymbolType, string> desc;
-    string lex;
-    TerminalSymbolType type;
-    explicit Token (TerminalSymbolType type, string lex = ""):
-        type(type),
-        lex(lex) {}
-    string getDesc () {
-      return desc.at(type);
-    }
-  };
-
   enum class SymbolType {
     NON_TERMINAL_SYMBOL,
     TERMINAL_SYMBOL,
     EPSILON,
-    END_OF_FILE,
     NONE
   };
 
   template<typename NonterminalSymbolType, typename TerminalSymbolType>
   class Symbol {
   public:
+    static map<TerminalSymbolType, string> TerminalDesc;
+    static map<NonterminalSymbolType, string> NonterminalDesc;
+
     SymbolType type;
     NonterminalSymbolType nt_type;
     TerminalSymbolType t_type;
@@ -80,6 +64,10 @@ namespace Spec {
       return type == SymbolType::TERMINAL_SYMBOL && t_type != TerminalSymbolType::none;
     }
 
+    bool isEpsilon () const {
+      return type == SymbolType::EPSILON;
+    }
+
     bool operator<(const Symbol &rhs) const {
       return type < rhs.type ||
              (type == rhs.type && nt_type < rhs.nt_type) ||
@@ -90,7 +78,21 @@ namespace Spec {
     bool operator==(const Symbol &rhs) const {
       return type == rhs.type && nt_type == rhs.nt_type && t_type == rhs.t_type && lex == rhs.lex;
     }
+
+    string getDesc () {
+      switch (type) {
+        case SymbolType::NON_TERMINAL_SYMBOL:
+          return NonterminalDesc[nt_type];
+        case SymbolType::TERMINAL_SYMBOL:
+          return TerminalDesc[t_type];
+        default:
+          return "Unknow";
+      }
+    }
   };
+
+  template <typename TerminalSymbolType>
+  using Lex = vector<pair<string, TerminalSymbolType>>;
 
   template <typename Symbol>
   using Production = vector<Symbol>;
@@ -117,6 +119,20 @@ namespace Spec {
              (nt == rhs.nt && p == rhs.p && pos < rhs.pos) ||
              (nt == rhs.nt && p == rhs.p && pos == rhs.pos && t < rhs.t);
     }
+  };
+
+  template <typename Symbol>
+  class AST {
+  public:
+    class Node {
+    public:
+      Symbol p;
+      vector<Node> children;
+      Node (Symbol s) : p(s), children() {}
+      void addChild (Node c) {
+        children.insert(children.begin(), c);
+      }
+    };
   };
 
 }

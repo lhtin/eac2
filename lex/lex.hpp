@@ -184,11 +184,11 @@ public:
     NFA2DFA dfa(nfa);
   dfa.print();
     minDFA* min = new minDFA(dfa);
-//  min->print();
+  min->print();
     list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
   }
 
-  Token* nextToken () {
+  Token nextToken () {
     for (auto item : list) {
       WrapFA& wfa = item.first;
       string lex;
@@ -196,7 +196,7 @@ public:
       char c = buf[at];
       int len = 0;
       if (c == EMPTY) {
-        break;
+        return Token(TokenType::eof);
       }
       while (c != EMPTY && wfa.accept(c)) {
         lex += c;
@@ -230,7 +230,7 @@ public:
           if (item.second == TokenType::space) {
             return nextToken();
           }
-          return new Token(item.second, lex);
+          return Token(item.second, lex);
         } else if (c == EMPTY) {
           cout << "源码结束但是解析未完成" << endl;
           break;
@@ -239,7 +239,7 @@ public:
         }
       }
     }
-    return nullptr;
+    return Token(TokenType::eof);
   }
 };
 
