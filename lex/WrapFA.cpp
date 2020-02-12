@@ -1,8 +1,5 @@
-#include <string>
-#include <utility>
-#include <iostream>
 #include <algorithm>
-#include "lex.hpp"
+#include "all.hpp"
 
 using namespace std;
 

@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <set>
 #include <map>
 #include <algorithm>
-#include "lex.hpp"
+#include "all.hpp"
+
 using namespace std;
 
 vector<FA::State*>* NFA2DFA::findQ (vector<State*>* q) {

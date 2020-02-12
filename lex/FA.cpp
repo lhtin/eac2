@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iterator>
-#include "lex.hpp"
+#include "all.hpp"
 #include "../utils/utils.hpp"
 using namespace std;
 

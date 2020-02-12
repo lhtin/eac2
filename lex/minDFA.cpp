@@ -2,7 +2,7 @@
 #include <set>
 #include <algorithm>
 #include <iterator>
-#include "lex.hpp"
+#include "all.hpp"
 
 SetSet minDFA::split (const SetSet& P, const Set& p, NFA2DFA& dfa) {
   Set temp1;

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lex.hpp"
+#include "all.hpp"
 
 using namespace std;
 
