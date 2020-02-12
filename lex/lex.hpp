@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <utility>
+#include "../spec/spec.hpp"
 
 using namespace std;
 
@@ -150,9 +151,11 @@ public:
 
 const int BUFFER_MAX = 1024;
 
-template <typename TokenType, typename Token, typename Lex>
+template <typename Token>
 class WrapLex {
 private:
+  using TokenType = typename Token::_TerminalSymbolType;
+  using Lex = Spec::Lex<TokenType>;
   vector<pair<WrapFA, TokenType>> list;
   char buf[BUFFER_MAX * 2];
   int at;
@@ -178,13 +181,13 @@ public:
 
   void addRE (string& re, TokenType type) {
     RETree tree(re);
-  tree.print();
+//  tree.print();
     RE2NFA nfa(tree.head);
-  nfa.print();
+//  nfa.print();
     NFA2DFA dfa(nfa);
-  dfa.print();
+//  dfa.print();
     minDFA* min = new minDFA(dfa);
-  min->print();
+//  min->print();
     list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
   }
 

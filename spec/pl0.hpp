@@ -41,15 +41,10 @@ enum class NonterminalSymbolType {
   None
 };
 
-const map<TerminalSymbolType, string> TokenDesc{
-    {TerminalSymbolType::ident,   "ident"},
-    {TerminalSymbolType::keyword, "keyword"},
-    {TerminalSymbolType::space,   "space"},
-    {TerminalSymbolType::number,  "number"}
-};
+using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
 
-template <typename NonterminalSymbolType, typename TerminalSymbolType>
-map<TerminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::TerminalDesc = {
+template <>
+map<TerminalSymbolType, string> Symbol::TerminalDesc = {
     {TerminalSymbolType::ident,   "ident"},
     {TerminalSymbolType::keyword, "keyword"},
     {TerminalSymbolType::space,   "space"},
@@ -58,23 +53,38 @@ map<TerminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymb
     {TerminalSymbolType::none,  "none"}
 };
 
-template <typename NonterminalSymbolType, typename TerminalSymbolType>
-map<NonterminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::NonterminalDesc = {
-
+template <>
+map<NonterminalSymbolType, string> Symbol::NonterminalDesc = {
+    {NonterminalSymbolType::Program, "Program"},
+    {NonterminalSymbolType::Block, "Block"},
+    {NonterminalSymbolType::Assign, "Assign"},
+    {NonterminalSymbolType::AssignRest, "AssignRest"},
+    {NonterminalSymbolType::Declare, "Declare"},
+    {NonterminalSymbolType::DeclareRest, "DeclareRest"},
+    {NonterminalSymbolType::Procedure, "Procedure"},
+    {NonterminalSymbolType::Statement, "Statement"},
+    {NonterminalSymbolType::StatementRest, "StatementRest"},
+    {NonterminalSymbolType::Condition, "Condition"},
+    {NonterminalSymbolType::RelationOp, "RelationOp"},
+    {NonterminalSymbolType::Expression, "Expression"},
+    {NonterminalSymbolType::ExpressionRest, "ExpressionRest"},
+    {NonterminalSymbolType::Op1, "Op1"},
+    {NonterminalSymbolType::Term, "Term"},
+    {NonterminalSymbolType::TermRest, "TermRest"},
+    {NonterminalSymbolType::Op2, "Op2"},
+    {NonterminalSymbolType::Factor, "Factor"},
+    {NonterminalSymbolType::None, "None"}
 };
 
-using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
-
-Symbol getPureSymbol (const Symbol& a) {
-  if (a.type == SymbolType::TERMINAL_SYMBOL && (a.t_type == TerminalSymbolType::ident || a.t_type == TerminalSymbolType::number)) {
-    return Symbol(a.t_type);
+template <>
+Symbol Symbol::getPureSymbol() {
+  if (this->type == SymbolType::TERMINAL_SYMBOL && (this->t_type == TerminalSymbolType::ident || this->t_type == TerminalSymbolType::number)) {
+    return Symbol(this->t_type);
   }
-  return a;
+  return *this;
 }
 
-using Lex = Spec::Lex<TerminalSymbolType>;
-
-const Lex PL0_LEX{
+const Spec::Lex<Symbol::_TerminalSymbolType> PL0_LEX{
     {
         R"(const|var|procedure|call|begin|end|while|do|odd|if|then|=|,|;|:=|?|!|#|<|<=|>|>=|\+|-|\*|/|\(|\)|.)",
         TerminalSymbolType::keyword
@@ -93,11 +103,8 @@ const Lex PL0_LEX{
     }
 };
 
-using Production = Spec::Production<Symbol>;
-using ProductionList = Spec::ProductionList<Symbol>;
-using CFG = Spec::CFG<Symbol>;
 /*
-const CFG PL0_CFG{
+const Spec::CFG<Symbol> PL0_CFG{
     {
         Symbol(NonterminalSymbolType::Program),
         {
@@ -149,7 +156,7 @@ const CFG PL0_CFG{
 };
  */
 
-const CFG PL0_CFG{
+const Spec::CFG<Symbol> PL0_CFG{
     {
         Symbol(NonterminalSymbolType::Program),
         {
@@ -399,11 +406,11 @@ const CFG PL0_CFG{
     },
     {
         Symbol(NonterminalSymbolType::Op2),
-        ProductionList {
-            Production {
+        {
+            {
                 Symbol(TerminalSymbolType::keyword, "*")
             },
-            Production {
+            {
                 Symbol(TerminalSymbolType::keyword, "/")
             }
         }

@@ -1,5 +1,5 @@
-#ifndef EAC2_SYNTAX_SPEC_H
-#define EAC2_SYNTAX_SPEC_H
+#ifndef EAC2_SYNTAX_H
+#define EAC2_SYNTAX_H
 
 #include <vector>
 #include <utility>
@@ -9,22 +9,48 @@
 #include <unordered_set>
 #include <tuple>
 #include <deque>
+#include <stack>
+#include <set>
 #include <iterator>
-#include "pl0.hpp"
+#include "../spec/spec.hpp"
 
 using namespace std;
 
-using LR1Item = Spec::LR1Item<Symbol>;
-using LR1CC = set<LR1Item>;
-using SetSymbol = set<Symbol>;
-using First = set<Symbol>;
-
-using Node = Spec::AST<Symbol>::Node;
-using Key = pair<int, Symbol>;
-
-template <typename WrapLex>
+template <typename Symbol, typename WrapLex>
 class LR1 {
 private:
+  using SymbolType = typename Symbol::_SymbolType;
+  using TerminalSymbolType = typename Symbol::_TerminalSymbolType;
+  using NonterminalSymbolType = typename Symbol::_NonterminalSymbolType;
+
+  using Production = Spec::Production<Symbol>;
+  using ProductionList = Spec::ProductionList<Symbol>;
+  using CFG = Spec::CFG<Symbol>;
+
+  class LR1Item {
+  public:
+    Symbol nt;
+    Production p;
+    int pos;
+    Symbol t;
+
+    LR1Item(Symbol nt, Production p, int pos, Symbol t) : nt(nt), p(p), pos(pos), t(t) {}
+
+    bool operator<(const LR1Item &rhs) const {
+      return nt < rhs.nt ||
+             (nt == rhs.nt && p < rhs.p) ||
+             (nt == rhs.nt && p == rhs.p && pos < rhs.pos) ||
+             (nt == rhs.nt && p == rhs.p && pos == rhs.pos && t < rhs.t);
+    }
+  };
+
+  using LR1Item = LR1Item;
+  using LR1CC = set<LR1Item>;
+  using SetSymbol = set<Symbol>;
+  using First = set<Symbol>;
+
+  using Key = pair<int, Symbol>;
+
   CFG cfg;
   map<Symbol, set<Symbol>> firstAll;
   Symbol epsilon;
@@ -40,13 +66,16 @@ private:
   int id;
 
 public:
+  using AST = Spec::AST<Symbol>;
+  using Node = typename AST::Node;
+
   LR1 (CFG cfg, NonterminalSymbolType start, WrapLex& lex):
-    cfg(cfg),
-    firstAll(),
-    Goal(start),
-    epsilon(SymbolType::EPSILON),
-    id(0),
-    lex(lex) {
+      cfg(cfg),
+      firstAll(),
+      Goal(start),
+      epsilon(SymbolType::EPSILON),
+      id(0),
+      lex(lex) {
     initAllFirst();
 
     ProductionList list = cfg[Goal];
@@ -64,14 +93,14 @@ public:
     s0 = CC2S[cc0];
     spread(cc, cc0);
   }
-  Node getAST () {
+  AST getAST () {
     Symbol word = lex.nextToken();
     stack<int> states;
     stack<Node> symbols;
     states.push(s0);
     while (true) {
       int state = states.top();
-      Symbol pure = getPureSymbol(word);
+      Symbol pure = word.getPureSymbol();
       if (Shift.find(Key{state, pure}) != Shift.end()) {
         auto it = Shift.find(Key{state, pure});
         states.push(it->second);
@@ -93,10 +122,10 @@ public:
         states.push(Goto[Key{states.top(), nt}]);
         if (nt == Goal) {
           // 构建成功
-          return parent;
+          return AST(parent);
         }
       } else {
-        return Node(Symbol(SymbolType::NONE));
+        return AST(Node(Symbol(SymbolType::NONE)));
       }
     }
   }

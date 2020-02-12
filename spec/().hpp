@@ -24,25 +24,30 @@ enum class NonterminalSymbolType {
   None
 };
 
-template <typename NonterminalSymbolType, typename TerminalSymbolType>
-map<TerminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::TerminalDesc = {
+using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
+
+template <>
+map<TerminalSymbolType, string> Symbol::TerminalDesc = {
     {TerminalSymbolType::keyword, "keyword"},
     {TerminalSymbolType::space, "space"},
     {TerminalSymbolType::eof, "eof"}
 };
 
-template <typename NonterminalSymbolType, typename TerminalSymbolType>
-map<NonterminalSymbolType, string> Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>::NonterminalDesc = {
+template <>
+map<NonterminalSymbolType, string> Symbol::NonterminalDesc = {
     {NonterminalSymbolType::Goal, "Goal"},
     {NonterminalSymbolType::List, "List"},
     {NonterminalSymbolType::Pair, "Pair"}
 };
 
-using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
+template <>
+Symbol Symbol::getPureSymbol() {
+  return *this;
+}
 
 // lex
-using Lex = Spec::Lex<TerminalSymbolType>;
-const Lex parentheses_lex = {
+using Lex = Spec::Lex<Symbol::_TerminalSymbolType>;
+const Lex PARENTHESES_LEX = {
     {
         R"(\(|\))",
         TerminalSymbolType::keyword
@@ -54,10 +59,8 @@ const Lex parentheses_lex = {
 };
 
 // syntax
-using Production = Spec::Production<Symbol>;
-using ProductionList = Spec::ProductionList<Symbol>;
 using CFG = Spec::CFG<Symbol>;
-const CFG parentheses_cfg{
+const CFG PARENTHESES_CFG{
     {
         Symbol(NonterminalSymbolType::Goal),
         {
