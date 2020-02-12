@@ -5,39 +5,51 @@
 
 using namespace std;
 
+static char space = ' ';
+
 void RENode::print (int tabs) {
   switch (op) {
     case Operator::SELECT:
-      cout << string(tabs, '\t') << "(Select" << endl;
-      left->print(tabs + 1);
-      right->print(tabs + 1);
-      cout << string(tabs, '\t') << ")" << endl;
+      cout << string(tabs, space) << "(Select" << endl;
+      left->print(tabs + 2);
+      right->print(tabs + 2);
+      cout << string(tabs, space) << ")" << endl;
       break;
     case Operator::CONNECT:
-      cout << string(tabs, '\t') << "(Connect" << endl;
-      left->print(tabs + 1);
-      right->print(tabs + 1);
-      cout << string(tabs, '\t') << ")" << endl;
+      cout << string(tabs, space) << "(Connect" << endl;
+      left->print(tabs + 2);
+      right->print(tabs + 2);
+      cout << string(tabs, space) << ")" << endl;
       break;
     case Operator::CLOSURE:
-      cout << string(tabs, '\t') << "(Closure" << endl;
-      child->print(tabs + 1);
-      cout << string(tabs, '\t') << ")" << endl;
+      cout << string(tabs, space) << "(Closure" << endl;
+      child->print(tabs + 2);
+      cout << string(tabs, space) << ")" << endl;
       break;
     case Operator::GROUP:
-      cout << string(tabs, '\t') << "(Group" << endl;
-      child->print(tabs + 1);
-      cout << string(tabs, '\t') << ")" << endl;
+      cout << string(tabs, space) << "(Group" << endl;
+      child->print(tabs + 2);
+      cout << string(tabs, space) << ")" << endl;
       break;
     case Operator::LEAF:
-      cout << string(tabs, '\t') << "(Leaf \"";
+      cout << string(tabs, space) << "(Leaf \"";
+      string res;
       for (auto it = chars.begin(); it != chars.end(); it++) {
         if (it != chars.begin()) {
-          cout << "|";
+          res += "|";
         }
-        cout << *it;
+        char c = *it;
+        if (c == '\t') {
+          res += R"(\t)";
+        } else if (c == ' ') {
+          res += R"(\s)";
+        } else if (c == '\n') {
+          res += R"(\n)";
+        } else {
+          res += c;
+        }
       }
-      cout << "\")" << endl;
+      cout << res << "\")" << endl;
       break;
   }
 }

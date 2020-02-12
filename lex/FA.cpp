@@ -71,10 +71,18 @@ void FA::print () {
       if (c == EMPTY) {
         accept += "ε";
       } else {
-        accept += c;
+        if (c == '\t') {
+          accept += R"(\t)";
+        } else if (c == ' ') {
+          accept += R"(\s)";
+        } else if (c == '\n') {
+          accept += R"(\n)";
+        } else {
+          accept += c;
+        }
       }
     }
-    cout << string(1, '\t')
+    cout << string(2, ' ')
          << "s" << item->start->n
          << " -->|" << accept << "| "
          << "s" << item->end->n << endl;

@@ -50,13 +50,13 @@ public:
 
   void addRE (string& re, TokenType type) {
     RETree tree(re);
-//  tree.print();
+    tree.print();
     RE2NFA nfa(tree.head);
-//  nfa.print();
+    nfa.print();
     NFA2DFA dfa(nfa);
-//  dfa.print();
+    dfa.print();
     minDFA* min = new minDFA(dfa);
-//  min->print();
+    min->print();
     list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
   }
 
