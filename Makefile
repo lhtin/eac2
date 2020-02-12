@@ -7,7 +7,8 @@ UTILS_SRC = utils.cpp
 UTILS_OBJS = ${UTILS_SRC:%.cpp=utils/%.o}
 
 run: main
-	./main spec/test1.pl0
+	./main spec/test1.pl0 > output.txt
+	cat output.txt
 
 ${LEX_OBJS}: %.o : %.cpp lex/all.hpp
 	clang++ -std=c++17 -c $< -o $@
