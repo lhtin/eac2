@@ -91,7 +91,7 @@ namespace Spec {
         case SymbolType::NON_TERMINAL_SYMBOL:
           return NonterminalDesc[nt_type];
         case SymbolType::TERMINAL_SYMBOL:
-          return TerminalDesc[t_type] + (lex.size() > 0 ? "_" + lex : "");
+          return TerminalDesc[t_type] + (lex.size() > 0 ? " " + lex : "");
         default:
           return "Unknow";
       }
@@ -146,6 +146,19 @@ namespace Spec {
     NodeString rootString;
 
     AST (Node root) : root(root), rootString(root) {}
+
+    string toString () {
+      return toString(rootString, 0);
+    }
+
+    string toString (NodeString node, int tab) {
+      string res = "";
+      res += string(tab, ' ') + node.p + "\n";
+      for (auto& item : node.children) {
+        res += toString(item, tab + 2);
+      }
+      return res;
+    }
   };
 
 }
