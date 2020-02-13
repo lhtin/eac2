@@ -90,7 +90,7 @@ minDFA::minDFA (NFA2DFA& dfa) {
     State* start = M[t1];
     Set t2 = findP(item->end, T);
     State* end = M[t2];
-    deltas.push_back(new Delta(start, item->accept, end));
+    addDelta(start, item->accept, end);
   }
   this->SA = vector<State*>(SA.begin(), SA.end());
 }

@@ -30,14 +30,14 @@ void NFA2DFA::spread (vector<State*>* q) {
     }
     vector<State*>* old = findQ(t);
     if (old != nullptr) {
-      deltas.push_back(new Delta(M[q], c, M[old]));
+      addDelta(M[q], c, M[old]);
       continue;
     }
 
     epsilonClosure(t);
     State* end = newState();
     S.push_back(end);
-    deltas.push_back(new Delta(M[q], c, end));
+    addDelta(M[q], c, end);
     auto it2 = find(t->begin(), t->end(), nfa->end);
     if (it2 != t->end()) {
       SA.push_back(end);
