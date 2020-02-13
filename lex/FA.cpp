@@ -24,13 +24,9 @@ FA::~FA () {
   }
 }
 void FA::addDelta (State* start, char accept, State* end) {
-  for (auto item : deltas) {
-    if (item->start == start && item->end == end) {
-      item->accept.insert(accept);
-      return;
-    }
-  }
-  deltas.push_back(new Delta(start, accept, end));
+  set<char> t;
+  t.insert(accept);
+  addDelta(start, t, end);
 }
 void FA::addDelta (State* start, const set<char>& accept, State* end) {
   for (auto item : deltas) {
