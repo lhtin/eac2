@@ -103,59 +103,6 @@ const Spec::Lex<Symbol::_TerminalSymbolType> PL0_LEX{
     }
 };
 
-/*
-const Spec::CFG<Symbol> PL0_CFG{
-    {
-        Symbol(NonterminalSymbolType::Program),
-        {
-            {
-                Symbol(NonterminalSymbolType::Block),
-                Symbol(TerminalSymbolType::keyword, ".")
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::Block),
-        {
-            {
-                Symbol(NonterminalSymbolType::Assign)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::Assign),
-        {
-            {
-                Symbol(TerminalSymbolType::keyword, "const"),
-                Symbol(TerminalSymbolType::ident),
-                Symbol(TerminalSymbolType::keyword, "="),
-                Symbol(TerminalSymbolType::number),
-                Symbol(NonterminalSymbolType::AssignRest),
-                Symbol(TerminalSymbolType::keyword, ";")
-            },
-            {
-                Symbol(SymbolType::EPSILON)
-            }
-        }
-    },
-    {
-        Symbol(NonterminalSymbolType::AssignRest),
-        {
-            {
-                Symbol(TerminalSymbolType::keyword, ","),
-                Symbol(TerminalSymbolType::ident),
-                Symbol(TerminalSymbolType::keyword, "="),
-                Symbol(TerminalSymbolType::number),
-                Symbol(NonterminalSymbolType::AssignRest)
-            },
-            {
-                Symbol(SymbolType::EPSILON)
-            }
-        }
-    }
-};
- */
-
 const Spec::CFG<Symbol> PL0_CFG{
     {
         Symbol(NonterminalSymbolType::Program),
