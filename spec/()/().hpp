@@ -1,10 +1,17 @@
+/** 括号语法
+Goal -> List
+List -> List Pair
+     |  Pair
+Pair -> ( Pair )
+     |  ()
+ */
+
 #ifndef EAC2_PARENTHESES_HPP
 #define EAC2_PARENTHESES_HPP
 
-#include <vector>
-#include <utility>
+#include <map>
 #include <string>
-#include "spec.hpp"
+#include "../spec.hpp"
 
 using namespace std;
 

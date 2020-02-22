@@ -4,7 +4,7 @@
 #include <iterator>
 #include "all.hpp"
 
-SetSet minDFA::split (const SetSet& P, const Set& p, NFA2DFA& dfa) {
+SetSet minDFA::split (const SetSet& P, const Set& p, DFA& dfa) {
   Set temp1;
   auto begin = p.begin();
   temp1.insert(*begin);
@@ -46,7 +46,9 @@ bool compare (FA::State* a, FA::State* b) {
   return a->n < b->n;
 }
 
-minDFA::minDFA (NFA2DFA& dfa) {
+minDFA::minDFA (DFA& dfa) {
+  chars = dfa.chars;
+
   SetSet T;
   SetSet P;
 
@@ -96,6 +98,6 @@ minDFA::minDFA (NFA2DFA& dfa) {
 }
 void minDFA::print () {
   cout << "-----minDFA start-----" << endl;
-  FA::print();
+  cout << FA::toString() << endl;
   cout << "-----minDFA end-----" << endl;
 }

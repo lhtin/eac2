@@ -3,7 +3,7 @@
 
 using namespace std;
 
-RE2NFA::Node RE2NFA::construct (RENode& node) {
+NFA::Node NFA::construct (RENode& node) {
   Node res;
   State* s0;
   State* end;
@@ -55,13 +55,13 @@ RE2NFA::Node RE2NFA::construct (RENode& node) {
   res.end = end;
   return res;
 }
-RE2NFA::RE2NFA (RENode& node) {
-  Node root = construct(node);
+NFA::NFA (RETree& tree) {
+  Node root = construct(tree.head);
   s0 = root.s0;
   end = root.end;
 }
-void RE2NFA::print () {
+void NFA::print () {
   cout << "-----RE2NFA start-----" << endl;
-  FA::print();
+  cout << FA::toString() << endl;
   cout << "-----RE2NFA end-----" << endl;
 }

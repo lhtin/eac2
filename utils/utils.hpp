@@ -9,5 +9,7 @@ using namespace std;
 
 void printNow (string tag = "");
 unsigned long long getNow ();
+string escape (char c);
+string escape (string str);
 
 #endif //EAC2_UTILS_HPP

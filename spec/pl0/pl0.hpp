@@ -1,10 +1,47 @@
+/** PL/0语言定义
+Program -> Block "."
+Block -> Assign Declare Procedure Statement
+Assign -> "const" ident "=" number AssignRest ";"
+       | ε
+AssignRest -> "," ident "=" number AssignRest
+           | ε
+Declare -> "var" ident DeclareRest ";"
+        | ε
+DeclareRest -> "," ident DeclareRest
+            | ε
+Procedure -> "procedure" ident ";" Block ";" Procedure
+          | ε
+Statement -> ident ":=" Expression
+          | "call" ident
+          | "?" ident
+          | "!" Expression
+          | "begin" Statement StatementRest "end"
+          | "if" Condition "then" Statement
+          | "while" Condition "do" Statement
+          | ε
+StatementRest -> ";" Statement StatementRest
+              | ε
+Condition -> "odd" Expression
+          | Expression RelationOp Expression
+RelationOp -> "=" | "#" | "<" | "<=" | ">" | ">="
+Expression -> Term ExpressionRest
+            | Op1 Term ExpressionRest
+ExpressionRest -> Op1 Term ExpressionRest
+                | ε
+Op1 -> "+" | "-"
+Term -> Factor TermRest
+TermRest -> Op2 Factor TermRest
+          | ε
+Op2 -> "*" | "/"
+Factor -> ident | number | "(" Expression ")"
+ */
+
 #ifndef EAC2_PL0_HPP
 #define EAC2_PL0_HPP
 
-#include <vector>
-#include <utility>
+#include <map>
 #include <string>
-#include "spec.hpp"
+#include "../spec.hpp"
 
 using namespace std;
 
@@ -78,7 +115,9 @@ map<NonterminalSymbolType, string> Symbol::NonterminalDesc = {
 
 template <>
 Symbol Symbol::getPureSymbol() {
-  if (this->type == SymbolType::TERMINAL_SYMBOL && (this->t_type == TerminalSymbolType::ident || this->t_type == TerminalSymbolType::number)) {
+  if (
+      this->type == SymbolType::TERMINAL_SYMBOL &&
+      (this->t_type == TerminalSymbolType::ident || this->t_type == TerminalSymbolType::number)) {
     return Symbol(this->t_type);
   }
   return *this;

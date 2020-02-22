@@ -38,13 +38,14 @@ public:
 
   RENode (string& re, int start, int end);
   ~RENode ();
-  void print (int tabs = 0);
   void expandRange (string& rre, int start, int end);
+  string toString (int tabs = 0);
 };
 
 class RETree {
 public:
   RENode head;
+  const string& re;
 
   explicit RETree (string& re);
   void print ();
@@ -80,7 +81,7 @@ public:
   FA ();
   ~FA ();
 
-  virtual void print ();
+  string toString ();
   void addDelta (State* start, char accept, State* end);
   void addDelta (State* start, const set<char>& accept, State* end);
   State* newState ();
@@ -88,7 +89,7 @@ public:
 };
 
 //// RE2NFA
-class RE2NFA: public FA {
+class NFA: public FA {
 public:
   class Node {
   public:
@@ -98,24 +99,24 @@ public:
 
   State* end;
 
-  explicit RE2NFA (RENode& node);
-  RE2NFA::Node construct (RENode& node);
-  void print () override;
+  explicit NFA (RETree& tree);
+  NFA::Node construct (RENode& node);
+  void print ();
 };
 
 //// NFA2DFA
-class NFA2DFA: public FA {
+class DFA: public FA {
 private:
   vector<vector<State*>*> Q;
   map<vector<State*>*, State*> M;
-  RE2NFA* nfa;
+  NFA* nfa;
 
 public:
-  explicit NFA2DFA (RE2NFA& nfa);
+  explicit DFA (NFA& nfa);
   void epsilonClosure (vector<State*>* q);
   vector<State*>* closure (vector<State*>* q1, char accept);
   State* getEndState (State* start, char accept);
-  void print () override;
+  void print ();
   vector<State*>* findQ (vector<State*>* q);
   void spread (vector<State*>* q);
 };
@@ -127,10 +128,10 @@ using Map = map<Set, FA::State*>;
 
 class minDFA: public FA {
 public:
-  explicit minDFA (NFA2DFA& dfa);
-  SetSet split (const SetSet& P, const Set& p, NFA2DFA& dfa);
+  explicit minDFA (DFA& dfa);
+  SetSet split (const SetSet& P, const Set& p, DFA& dfa);
   Set findP (State* s, SetSet& T);
-  void print () override;
+  void print ();
 };
 
 class WrapFA {

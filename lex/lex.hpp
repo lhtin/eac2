@@ -49,14 +49,15 @@ public:
   }
 
   void addRE (string& re, TokenType type) {
+    cout << "RE: " << escape(re) << endl;
     RETree tree(re);
-    tree.print();
-    RE2NFA nfa(tree.head);
-    nfa.print();
-    NFA2DFA dfa(nfa);
-    dfa.print();
+//    tree.print();
+    NFA nfa(tree);
+//    nfa.print();
+    DFA dfa(nfa);
+//    dfa.print();
     minDFA* min = new minDFA(dfa);
-    min->print();
+//    min->print();
     list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
   }
 

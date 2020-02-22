@@ -6,7 +6,7 @@
 
 using namespace std;
 
-vector<FA::State*>* NFA2DFA::findQ (vector<State*>* q) {
+vector<FA::State*>* DFA::findQ (vector<State*>* q) {
   if (q->empty()) {
     return nullptr;
   }
@@ -18,7 +18,7 @@ vector<FA::State*>* NFA2DFA::findQ (vector<State*>* q) {
   return nullptr;
 }
 
-void NFA2DFA::spread (vector<State*>* q) {
+void DFA::spread (vector<State*>* q) {
   for (char c : nfa->chars) {
     if (c == EMPTY) {
       // 忽略epsilon
@@ -49,7 +49,7 @@ void NFA2DFA::spread (vector<State*>* q) {
   }
 }
 
-NFA2DFA::NFA2DFA (RE2NFA& nfa): nfa(&nfa), Q(), M() {
+DFA::DFA (NFA& nfa): nfa(&nfa), Q(), M() {
   chars = nfa.chars;
   map<vector<State*>*, State*> sMap;
   map<vector<State*>, vector<State*>*> qMap;
@@ -68,7 +68,7 @@ NFA2DFA::NFA2DFA (RE2NFA& nfa): nfa(&nfa), Q(), M() {
   M[q0] = s0;
   spread(q0);
 }
-vector<FA::State*>* NFA2DFA::closure (vector<State*>* q1, char accept) {
+vector<FA::State*>* DFA::closure (vector<State*>* q1, char accept) {
   vector<State*>* q2 = new vector<State*>();
   for (auto item : nfa->deltas) {
     bool isExistStart = find(q1->begin(), q1->end(), item->start) != q1->end();
@@ -78,8 +78,7 @@ vector<FA::State*>* NFA2DFA::closure (vector<State*>* q1, char accept) {
   }
   return q2;
 }
-void NFA2DFA::epsilonClosure(vector<State*>* q) {
-//  printNow("epsilonClosure");
+void DFA::epsilonClosure(vector<State*>* q) {
   bool has;
   do {
     has = false;
@@ -94,13 +93,8 @@ void NFA2DFA::epsilonClosure(vector<State*>* q) {
       }
     }
   } while (has);
-//  for (auto item : *q) {
-//    cout << " s" << item->n;
-//  }
-//  cout << endl;
-//  printNow("epsilonClosure end");
 }
-FA::State* NFA2DFA::getEndState (State* start, char accept) {
+FA::State* DFA::getEndState (State* start, char accept) {
   auto it = find_if(
       deltas.begin(), deltas.end(),
       [&](Delta* item) {
@@ -112,8 +106,8 @@ FA::State* NFA2DFA::getEndState (State* start, char accept) {
     return nullptr;
   }
 }
-void NFA2DFA::print () {
+void DFA::print () {
   cout << "-----NFA2DFA start-----" << endl;
-  FA::print();
+  cout << FA::toString() << endl;
   cout << "-----NFA2DFA end-----" << endl;
 }

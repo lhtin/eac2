@@ -5,8 +5,8 @@
 #include "lex/lex.hpp"
 #include "syntax/LR1.hpp"
 
-#include "spec/pl0.hpp" // 解析PL/0语言
-//#include "spec/().hpp"  // 解析括号语言
+#include "spec/pl0/pl0.hpp" // 解析PL/0语言
+//#include "spec/()/().hpp"  // 解析括号语言
 
 using namespace std;
 
@@ -22,6 +22,6 @@ int main (int argc, char *argv[]) {
   printNow();
 
   My_LR1::AST ast = lr1.getAST();
-  cout << ast.toString() << endl; // 输出抽象语法树
+  cout << "AST:\n" << ast.toString() << endl; // 输出抽象语法树
   return 0;
 }

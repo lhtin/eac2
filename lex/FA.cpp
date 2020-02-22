@@ -42,21 +42,20 @@ FA::State* FA::newState () {
   id += 1;
   return s;
 }
-void FA::print () {
-  printNow();
-  cout << "S:";
+string FA::toString () {
+  string res;
+  res += "S:";
   for (auto item : S) {
-    cout << " s" << item->n;
+    res += " s" + to_string(item->n);
   }
-  cout << endl;
-
-  cout << "chars:";
+  res += "\n";
+  res += "chars:";
   for (char c : chars) {
-    cout << " " << c;
+    res += " " + escape(c);
   }
-  cout << endl;
+  res += "\n";
 
-  cout << "δ: " << deltas.size() << endl;
+  res += "δ: " + to_string(deltas.size()) + "\n";
   for (Delta* item : deltas) {
     string accept;
     for (auto it = item->accept.begin(); it != item->accept.end(); it++) {
@@ -64,33 +63,21 @@ void FA::print () {
       if (it != item->accept.begin()) {
         accept += ",";
       }
-      if (c == EMPTY) {
-        accept += "ε";
-      } else {
-        if (c == '\t') {
-          accept += R"(\t)";
-        } else if (c == ' ') {
-          accept += R"(\s)";
-        } else if (c == '\n') {
-          accept += R"(\n)";
-        } else {
-          accept += c;
-        }
-      }
+      accept += escape(c);
     }
-    cout << string(2, ' ')
-         << "s" << item->start->n
-         << " -->|" << accept << "| "
-         << "s" << item->end->n << endl;
+    res += string(2, ' ')
+      + "s" + to_string(item->start->n)
+      + " -->|" + accept + "| "
+      + "s" + to_string(item->end->n) + "\n";
   }
 
-  cout << "s0: s" << s0->n << endl;
+  res += "s0: s" + to_string(s0->n) + "\n";
 
-  cout << "SA:";
+  res += "SA:";
   for (auto item : SA) {
-    cout << " s" << item->n;
+    res += " s" + to_string(item->n);
   }
-  cout << endl;
+  return res;
 }
 
 unordered_map<int, unordered_map<char, int>> FA::getDeltas () {

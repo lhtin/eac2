@@ -2,57 +2,11 @@
 #include <string>
 #include <cassert>
 #include "all.hpp"
+#include "../utils/utils.hpp"
 
 using namespace std;
 
 static char space = ' ';
-
-void RENode::print (int tabs) {
-  switch (op) {
-    case Operator::SELECT:
-      cout << string(tabs, space) << "(Select" << endl;
-      left->print(tabs + 2);
-      right->print(tabs + 2);
-      cout << string(tabs, space) << ")" << endl;
-      break;
-    case Operator::CONNECT:
-      cout << string(tabs, space) << "(Connect" << endl;
-      left->print(tabs + 2);
-      right->print(tabs + 2);
-      cout << string(tabs, space) << ")" << endl;
-      break;
-    case Operator::CLOSURE:
-      cout << string(tabs, space) << "(Closure" << endl;
-      child->print(tabs + 2);
-      cout << string(tabs, space) << ")" << endl;
-      break;
-    case Operator::GROUP:
-      cout << string(tabs, space) << "(Group" << endl;
-      child->print(tabs + 2);
-      cout << string(tabs, space) << ")" << endl;
-      break;
-    case Operator::LEAF:
-      cout << string(tabs, space) << "(Leaf \"";
-      string res;
-      for (auto it = chars.begin(); it != chars.end(); it++) {
-        if (it != chars.begin()) {
-          res += "|";
-        }
-        char c = *it;
-        if (c == '\t') {
-          res += R"(\t)";
-        } else if (c == ' ') {
-          res += R"(\s)";
-        } else if (c == '\n') {
-          res += R"(\n)";
-        } else {
-          res += c;
-        }
-      }
-      cout << res << "\")" << endl;
-      break;
-  }
-}
 
 void RENode::expandRange (string& rre, int start, int end) {
   for (int i = start; i <= end; i += 1) {
@@ -223,10 +177,40 @@ RENode::~RENode () {
   delete child;
 }
 
-RETree::RETree (string& re): head(re, 0, re.size() - 1) {
+string RENode::toString (int tabs) {
+  string res = string(tabs, space);
+  switch (op) {
+    case Operator::SELECT:
+      res += "(Select\n" + left->toString(tabs + 2) + "\n" + right->toString(tabs + 2) + ")";
+      break;
+    case Operator::CONNECT:
+      res += "(Connect\n" + left->toString(tabs + 2) + "\n" + right->toString(tabs + 2) + ")";
+      break;
+    case Operator::CLOSURE:
+      res += "(Closure\n" + child->toString(tabs + 2) + ")";
+      break;
+    case Operator::GROUP:
+      res += "(Group\n" + child->toString(tabs + 2) + ")";
+      break;
+    case Operator::LEAF:
+      res +=  "(Leaf \"";
+      for (auto it = chars.begin(); it != chars.end(); it++) {
+        if (it != chars.begin()) {
+          res += "|";
+        }
+        char c = *it;
+        res += escape(c);
+      }
+      res += "\")";
+      break;
+  }
+  return res;
+}
+
+RETree::RETree (string& re): re(re), head(re, 0, re.size() - 1) {
 }
 void RETree::print () {
   cout << "------print RE Tree start-----" << endl;
-  head.print();
+  cout << head.toString() << endl;
   cout << "------print RE Tree end-----" << endl;
 }
