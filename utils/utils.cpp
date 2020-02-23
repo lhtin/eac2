@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <stdexcept>
+
 #include "utils.hpp"
 
 using namespace std;
@@ -43,4 +45,10 @@ string escape (string str) {
     res += escape(str[i]);
   }
   return res;
+}
+
+void assert_with_msg (bool isOK, string errMsg) {
+  if (!isOK) {
+    throw runtime_error(errMsg);
+  }
 }

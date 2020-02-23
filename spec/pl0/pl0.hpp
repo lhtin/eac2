@@ -48,12 +48,12 @@ using namespace std;
 using SymbolType = Spec::SymbolType;
 
 enum class TerminalSymbolType {
+  ignore,
+  none,
+  eof,
   ident,
   keyword,
-  space,
-  number,
-  none,
-  eof
+  number
 };
 
 enum class NonterminalSymbolType {
@@ -84,10 +84,10 @@ template <>
 map<TerminalSymbolType, string> Symbol::TerminalDesc = {
     {TerminalSymbolType::ident,   "ident"},
     {TerminalSymbolType::keyword, "keyword"},
-    {TerminalSymbolType::space,   "space"},
+    {TerminalSymbolType::ignore,  "ignore"},
     {TerminalSymbolType::number,  "number"},
-    {TerminalSymbolType::eof,  "eof"},
-    {TerminalSymbolType::none,  "none"}
+    {TerminalSymbolType::eof,     "eof"},
+    {TerminalSymbolType::none,    "none"}
 };
 
 template <>
@@ -119,7 +119,7 @@ Symbol Symbol::getPureSymbol() {
       this->type == SymbolType::TERMINAL_SYMBOL &&
       (this->t_type == TerminalSymbolType::ident ||
        this->t_type == TerminalSymbolType::number ||
-       this->t_type == TerminalSymbolType::space)) {
+       this->t_type == TerminalSymbolType::ignore)) {
     return Symbol(this->t_type);
   }
   return *this;
@@ -140,7 +140,7 @@ const Spec::Lex<Symbol::_TerminalSymbolType> LEX{
     },
     {
         "[ \n\t]+",
-        TerminalSymbolType::space
+        TerminalSymbolType::ignore
     }
 };
 

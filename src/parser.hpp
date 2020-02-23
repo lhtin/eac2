@@ -1,6 +1,11 @@
 #ifndef EAC2_PARSER_HPP
 #define EAC2_PARSER_HPP
 
+#include <stack>
+#include <utility>
+#include <string>
+#include "utils.hpp"
+
 template <typename Symbol, typename Lex, typename LR1>
 class parser {
 private:
@@ -9,6 +14,8 @@ private:
   ifstream sourceFile;
   string buf;
   int bufAt;
+  int line;
+  int column;
 public:
   using Node = typename LR1::Node;
   using Key = typename LR1::Key;
@@ -32,6 +39,8 @@ public:
     if (sourceFile.is_open()) {
       buf = "";
       bufAt = 0;
+      line = 1;
+      column = 1;
       o = Output();
       AST ast = getAST();
       o.ast = ast.toString();
@@ -40,33 +49,50 @@ public:
     } else {
       // 无法打开需要解析的源代码文件
       sourceFile.close();
-      assert(false);
+      assert_with_msg(false, "无法打开源代码文件");
+      return Output();
+    }
+  }
+
+  Output getTokens (string source) {
+    sourceFile = ifstream(source);
+    if (sourceFile.is_open()) {
+      buf = "";
+      bufAt = 0;
+      line = 1;
+      column = 1;
+      o = Output();
+      Symbol s = nextToken();
+      while (!s.is(TerminalSymbolType::eof)) {
+        s = nextToken();
+      }
+      sourceFile.close();
+      return o;
+    } else {
+      // 无法打开需要解析的源代码文件
+      sourceFile.close();
+      assert_with_msg(false, "无法打开源代码文件");
+      return Output();
     }
   }
 
   char nextChar () {
+    char c;
     if (!buf.empty() && bufAt < buf.length()) {
-      char c = buf[bufAt];
+      c = buf[bufAt];
       bufAt += 1;
-      return c;
     } else {
-      char c = sourceFile.get();
+      c = sourceFile.get();
       buf.push_back(c);
       bufAt += 1;
-      return c;
     }
-  }
-  /**
-   * 回退n个字符
-   * @param n
-   */
-  void goBack (int n) {
-    assert(bufAt - n >= 0);
-    bufAt -= n;
+    return c;
   }
 
   Symbol nextToken () {
     string text;
+    int currentLine = line;
+    int currentColumn = column;
     TerminalSymbolType type = TerminalSymbolType::none;
     for (auto item : lex.list) {
       WrapFA& wfa = item.first;
@@ -80,40 +106,41 @@ public:
         temp += c;
         c = nextChar();
       }
-      goBack(1);
       bool isFinish = wfa.isFinish();
       if (!isFinish && wfa.getPrevFinishedDelta() > 0) {
         int backLen = wfa.getPrevFinishedDelta();
         temp = temp.substr(0, temp.size() - backLen);
-        goBack(backLen);
         isFinish = true;
       }
       wfa.reset();
       if (isFinish) {
-        if (temp.length() <= text.length()) {
-          // 当前找到的token比前面找到的短，所以丢弃
-          continue;
-        } else {
+        if (temp.length() > text.length()) {
           // 当前找到的token比前面找到的长，使用新的
           type = item.second;
           text = temp;
-        }
-      } else {
-        if (temp.length() > text.length()) {
-          // 当前没有找到token且消耗的字符比前一个token长，则回退
-          goBack(temp.length() - text.length());
         }
       }
       bufAt = 0;
     }
 
     // 为none说明没有找到匹配的token，源码有误
-    assert(type != TerminalSymbolType::none);
 
+    assert_with_msg(type != TerminalSymbolType::none,
+        "本位置(" + to_string(currentLine) + ":" + to_string(currentColumn) + ")的字符无法识别为有效Token");
+
+    // 确定下一个token的位置
+    for (int i = 0; i < text.length(); i += 1) {
+      if (text[i] == '\n') {
+        line += 1;
+        column = 1;
+      } else {
+        column += 1;
+      }
+    }
     buf = buf.substr(text.length(), buf.length() - text.length());
     bufAt = 0;
 
-    Symbol s = Symbol(type, text);
+    Symbol s = Symbol(type, text, currentLine, currentColumn);
     o.tokens += s.getDesc() + "\n";
     return s;
   }
@@ -125,7 +152,7 @@ public:
     while (true) {
       int state = states.top();
       Symbol pure = word.getPureSymbol();
-      if (pure.is(TerminalSymbolType::space)) {
+      if (pure.is(TerminalSymbolType::ignore)) {
         word = nextToken();
         continue;
       } else if (lr1.Shift.find(Key{state, pure}) != lr1.Shift.end()) {

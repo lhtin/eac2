@@ -16,7 +16,7 @@ using SymbolType = Spec::SymbolType;
 enum class TerminalSymbolType {
   keyword,
   ident,
-  space,
+  ignore,
   eof,
   none
 };
@@ -31,9 +31,9 @@ using Symbol = Spec::Symbol<NonterminalSymbolType, TerminalSymbolType>;
 template <>
 map<TerminalSymbolType, string> Symbol::TerminalDesc = {
     {TerminalSymbolType::keyword, "keyword"},
-    {TerminalSymbolType::ident, "ident"},
-    {TerminalSymbolType::space, "space"},
-    {TerminalSymbolType::eof, "eof"}
+    {TerminalSymbolType::ident,   "ident"},
+    {TerminalSymbolType::ignore,  "ignore"},
+    {TerminalSymbolType::eof,     "eof"}
 };
 
 template <>

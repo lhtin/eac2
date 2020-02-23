@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
-#include <cassert>
 #include "all.hpp"
-#include "../utils/utils.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -11,10 +10,10 @@ static char space = ' ';
 void RENode::expandRange (string& rre, int start, int end) {
   for (int i = start; i <= end; i += 1) {
     char c0 = rre[i];
-    assert(c0 != '-');
+    assert_with_msg(c0 != '-', "范围符(-)之前需要字符");
     chars.insert(c0);
     if (i + 1 <= end && rre[i + 1] == '-') {
-      assert(i + 2 <= end);
+      assert_with_msg(i + 2 <= end, "范围符(-)之后需要字符");
       char c1 = rre[i + 2];
       for (char j = static_cast<char>(c0 + 1); j <= c1; j += 1) {
         chars.insert(j);
@@ -38,10 +37,10 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
     char c = re[at];
     if (c == '\\') {
       // 如果是转义字符则跳过
-      assert(at < end);
+      assert_with_msg(at < end, "转义字符(\\)后面需要字符");
       at += 1;
     } else if (c == '(') {
-      assert(bracketCount == 0); // 小括号不能出现在中括号里面
+      assert_with_msg(bracketCount == 0, "小括号不能出现在中括号里面");
       parenthesisCount += 1;
     } else if (c == ')') {
       parenthesisCount -= 1;
@@ -51,16 +50,14 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
       bracketCount -= 1;
     } else if (c == '|' && parenthesisCount == 0 && bracketCount == 0) {
       op = Operator::SELECT;
-//      assert(start <= at - 1); 允许｜左右为空，表示δ
       left = new RENode(re, start, at - 1);
-//      assert(at + 1 <= end); 允许｜左右为空δ
       right = new RENode(re, at + 1, end);
       return;
     }
     at += 1;
   }
-  assert(parenthesisCount == 0);
-  assert(bracketCount == 0);
+  assert_with_msg(parenthesisCount == 0, "小括号没有成双结对");
+  assert_with_msg(bracketCount == 0, "中括号没有成双结对");
 
   at = start;
   parenthesisCount = 0;
@@ -81,15 +78,13 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
             continue;
           } else {
             op = Operator::CONNECT;
-            assert(start <= at);
             left = new RENode(re, start, at);
-            assert(at + 1 <= end);
             right = new RENode(re, at + 1, end);
             return;
           }
         } else {
           op = Operator::GROUP;
-          assert(start + 1 <= end - 1);
+          assert_with_msg(start + 1 <= end - 1, "分组括号()里面需要含有内容");
           child = new RENode(re, start + 1, end - 1);
           return;
         }
@@ -104,15 +99,13 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
             continue;
           } else {
             op = Operator::CONNECT;
-            assert(start <= at);
             left = new RENode(re, start, at);
-            assert(at + 1 <= end);
             right = new RENode(re, at + 1, end);
             return;
           }
         } else {
           op = Operator::LEAF;
-          assert(start + 1 <= end - 1);
+          assert_with_msg(start + 1 <= end - 1, "方括号[]里面需要含有内容");
           expandRange(re, start + 1, end - 1);
           return;
         }
@@ -121,19 +114,17 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
       if (parenthesisCount == 0) {
         if (at < end) {
           op = Operator::CONNECT;
-          assert(start <= at);
           left = new RENode(re, start, at);
-          assert(at + 1 <= end);
           right = new RENode(re, at + 1, end);
           return;
         } else if (c == '*') {
           op = Operator::CLOSURE;
-          assert(start <= end - 1);
+          assert_with_msg(start <= end - 1, "*前面需要有内容");
           child = new RENode(re, start, end - 1);
           return;
         } else if (c == '+') {
           op = Operator::CONNECT;
-          assert(start <= end - 1);
+          assert_with_msg(start <= end - 1, "+前面需要有内容");
           left = new RENode(re, start, end - 1);
           string t(re, start, end - start + 1);
           t[end - start] = '*';
@@ -144,7 +135,7 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
     } else {
       if (parenthesisCount == 0 && bracketCount == 0) {
         if (c == '\\') {
-          assert(at < end);
+          assert_with_msg(at < end, "转义字符(\\)后面需要字符");
           at += 1;
           c = re[at];
         }
@@ -155,9 +146,7 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
             continue;
           } else {
             op = Operator::CONNECT;
-            assert(start <= at);
             left = new RENode(re, start, at);
-            assert(at + 1 <= end);
             right = new RENode(re, at + 1, end);
             return;
           }

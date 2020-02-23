@@ -12,8 +12,8 @@
 #include <stack>
 #include <set>
 #include <iterator>
-#include <cassert>
-#include "../spec/spec.hpp"
+#include "spec.hpp"
+#include "utils.hpp"
 
 using namespace std;
 
@@ -213,7 +213,7 @@ public:
     for (const LR1Item& item : s) {
       if (item.pos == item.p.size()) {
         Key k = Key{state, item.t};
-        assert(Reduce.find(k) == Reduce.end()); // Reduce与Shift冲突，语法上有二义性
+        assert_with_msg(Reduce.find(k) == Reduce.end(), "Reduce与Shift冲突，语法上有二义性");
         Reduce.emplace(k, item);
       }
     }
@@ -260,7 +260,7 @@ public:
       int state2 = CC2S[s2];
       Key k = Key{state, item.first};
       if (ShiftT.find(k) != ShiftT.end()) {
-        assert(Reduce.find(k) == Reduce.end()); // Reduce与Shift冲突，语法上有二义性
+        assert_with_msg(Reduce.find(k) == Reduce.end(), "Reduce与Shift冲突，语法上有二义性");
         Shift.emplace(k, state2);
       } else if (GotoT.find(k) != GotoT.end()) {
         Goto.emplace(k, state2);

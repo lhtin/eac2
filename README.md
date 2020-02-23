@@ -44,7 +44,7 @@ const Lex PL0_LEX{
     },
     {
         "[ \n\t]+",
-        TerminalSymbolType::space
+        TerminalSymbolType::ignore
     }
 };
 ```
