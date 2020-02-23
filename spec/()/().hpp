@@ -65,6 +65,7 @@ const Spec::Lex<Symbol::_TerminalSymbolType> LEX = {
 };
 
 // syntax
+const Symbol START_SYMBOL = Symbol(NonterminalSymbolType::Goal);
 const Spec::CFG<Symbol> CFG{
     {
         Symbol(NonterminalSymbolType::Goal),

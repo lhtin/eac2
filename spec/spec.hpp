@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "utils.hpp"
 
 using namespace std;
 
@@ -91,9 +92,9 @@ namespace Spec {
         case SymbolType::NON_TERMINAL_SYMBOL:
           return NonterminalDesc[nt_type];
         case SymbolType::TERMINAL_SYMBOL:
-          return TerminalDesc[t_type] + (lex.size() > 0 ? " " + lex : "");
+          return TerminalDesc[t_type] + (lex.size() > 0 ? " " + escape(lex) : "");
         default:
-          return "Unknow";
+          return "Error";
       }
     }
   };

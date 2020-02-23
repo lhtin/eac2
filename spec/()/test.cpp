@@ -3,7 +3,7 @@
 #include "Lex.hpp"
 #include "LR1.hpp"
 
-#include "pl0.hpp"
+#include "().hpp"
 #include "compiler.hpp"
 
 using namespace std;
@@ -17,7 +17,7 @@ int main () {
   My_LR1 lr1(CFG, START_SYMBOL);
   Compiler c = Compiler(lex, lr1);
   printNow();
-  Compiler::Output o = c.parser("test1.pl0");
+  Compiler::Output o = c.parser("test1.()");
   printNow();
   cout << "Tokens:\n" << o.tokens << endl;
   cout << "AST:\n" << o.ast << endl; // 输出抽象语法树

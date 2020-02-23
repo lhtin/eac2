@@ -17,9 +17,9 @@
 
 using namespace std;
 
-template <typename Symbol, typename WrapLex>
+template <typename Symbol>
 class LR1 {
-private:
+public:
   using SymbolType = typename Symbol::_SymbolType;
   using TerminalSymbolType = typename Symbol::_TerminalSymbolType;
   using NonterminalSymbolType = typename Symbol::_NonterminalSymbolType;
@@ -27,7 +27,7 @@ private:
   using Production = Spec::Production<Symbol>;
   using ProductionList = Spec::ProductionList<Symbol>;
   using CFG = Spec::CFG<Symbol>;
-
+private:
   class LR1Item {
   public:
     Symbol nt;
@@ -50,33 +50,31 @@ private:
   using SetSymbol = set<Symbol>;
   using First = set<Symbol>;
 
-  using Key = pair<int, Symbol>;
-
   CFG cfg;
   map<Symbol, set<Symbol>> firstAll;
   Symbol epsilon;
-  Symbol Goal;
-
-  map<Key, int> Shift;
-  map<Key, LR1Item> Reduce;
-  map<Key, int> Goto;
   map<LR1CC, int> CC2S;
-  WrapLex& lex;
-  int s0;
 
   int id;
 
 public:
   using AST = Spec::AST<Symbol>;
   using Node = typename AST::Node;
+  using Key = pair<int, Symbol>;
 
-  LR1 (CFG cfg, NonterminalSymbolType start, WrapLex& lex):
+  map<Key, int> Shift;
+  map<Key, LR1Item> Reduce;
+  map<Key, int> Goto;
+  Symbol Goal;
+
+  int s0;
+
+  LR1 (CFG cfg, Symbol start):
       cfg(cfg),
       firstAll(),
       Goal(start),
       epsilon(SymbolType::EPSILON),
-      id(0),
-      lex(lex) {
+      id(0) {
     initAllFirst();
 
     ProductionList list = cfg[Goal];
@@ -93,43 +91,6 @@ public:
     CC2S[cc0] = getNewState();
     s0 = CC2S[cc0];
     spread(cc, cc0);
-  }
-  AST getAST () {
-    Symbol word = lex.nextToken();
-    stack<int> states;
-    stack<Node> symbols;
-    states.push(s0);
-    while (true) {
-      int state = states.top();
-      Symbol pure = word.getPureSymbol();
-      if (Shift.find(Key{state, pure}) != Shift.end()) {
-        auto it = Shift.find(Key{state, pure});
-        states.push(it->second);
-        symbols.push(Node(word));
-        word = lex.nextToken();
-      } else if (Reduce.find(Key{state, pure}) != Reduce.end()) {
-        auto it = Reduce.find(Key{state, pure});
-        Production p = it->second.p;
-        Symbol nt = it->second.nt;
-        Node parent(nt);
-        for (auto& it1 : p) {
-          if (!it1.isEpsilon()) {
-            parent.addChild(symbols.top());
-            symbols.pop();
-            states.pop();
-          }
-        }
-        symbols.push(parent);
-        states.push(Goto[Key{states.top(), nt}]);
-        if (nt == Goal) {
-          // 构建成功
-          return AST(parent);
-        }
-      } else {
-        // 到达此处说明构建不成功
-        assert(false);
-      }
-    }
   }
   int getNewState () {
     int state = id;

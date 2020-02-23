@@ -117,7 +117,9 @@ template <>
 Symbol Symbol::getPureSymbol() {
   if (
       this->type == SymbolType::TERMINAL_SYMBOL &&
-      (this->t_type == TerminalSymbolType::ident || this->t_type == TerminalSymbolType::number)) {
+      (this->t_type == TerminalSymbolType::ident ||
+       this->t_type == TerminalSymbolType::number ||
+       this->t_type == TerminalSymbolType::space)) {
     return Symbol(this->t_type);
   }
   return *this;
@@ -141,6 +143,8 @@ const Spec::Lex<Symbol::_TerminalSymbolType> LEX{
         TerminalSymbolType::space
     }
 };
+
+const Symbol START_SYMBOL = Symbol(NonterminalSymbolType::Program);
 
 const Spec::CFG<Symbol> CFG{
     {
