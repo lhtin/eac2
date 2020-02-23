@@ -126,7 +126,8 @@ public:
           return AST(parent);
         }
       } else {
-        return AST(Node(Symbol(SymbolType::NONE)));
+        // 到达此处说明构建不成功
+        assert(false);
       }
     }
   }

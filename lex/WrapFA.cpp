@@ -3,33 +3,7 @@
 
 using namespace std;
 
-WrapFA::WrapFA (FA* fa): fa(fa), current(fa->s0), current2(fa->s0->n), deltas(fa->getDeltas()) {}
-bool WrapFA::accept2 (char c) {
-  auto it1 = deltas.find(current2);
-  if (it1 != deltas.end()) {
-    auto it2 = it1->second.find(c);
-    if (it2 != it1->second.end()) {
-      current2 = it2->second;
-      return true;
-    }
-  }
-  return false;
-}
-bool WrapFA::isFinish2 () {
-  auto it = find_if(
-      fa->SA.begin(), fa->SA.end(),
-      [&](FA::State* item) {
-        return item->n == current2;
-      });
-  if (it != fa->SA.end()) {
-    return true;
-  } else {
-    return false;
-  }
-}
-void WrapFA::reset2 () {
-  current2 = fa->s0->n;
-}
+WrapFA::WrapFA (FA* fa): fa(fa), current(fa->s0), at(0), finishedLength() {}
 bool WrapFA::accept (char c) {
   auto it = find_if(
       fa->deltas.begin(), fa->deltas.end(),
@@ -38,9 +12,20 @@ bool WrapFA::accept (char c) {
       });
   if (it != fa->deltas.end()) {
     current = (*it)->end;
+    at += 1;
+    if (isFinish()) {
+      finishedLength.push_back(at);
+    }
     return true;
   } else {
     return false;
+  }
+}
+int WrapFA::getPrevFinishedDelta () {
+  if (!finishedLength.empty()) {
+    return at - finishedLength.back();
+  } else {
+    return 0;
   }
 }
 bool WrapFA::isFinish () {
@@ -57,4 +42,6 @@ bool WrapFA::isFinish () {
 }
 void WrapFA::reset () {
   current = fa->s0;
+  at = 0;
+  finishedLength.clear();
 }

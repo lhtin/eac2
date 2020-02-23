@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <utility>
+#include <cassert>
 #include "all.hpp"
 #include "../spec/spec.hpp"
 
@@ -26,21 +27,21 @@ private:
   using TokenType = typename Token::_TerminalSymbolType;
   using Lex = Spec::Lex<TokenType>;
   vector<pair<WrapFA, TokenType>> list;
-  char buf[BUFFER_MAX * 2];
-  int at;
   ifstream sourceFile;
+  string buf;
+  int bufAt;
 
 public:
-  WrapLex (Lex lexSpec, string sourcePath): at(0), buf(), sourceFile(sourcePath) {
+  WrapLex (Lex lexSpec, string sourcePath): bufAt(0), sourceFile(sourcePath) {
     if (sourceFile.is_open()) {
       for (auto it = lexSpec.begin(); it != lexSpec.end(); it++) {
         string re = it->first;
         TokenType type = it->second;
         addRE(re, type);
       }
-      sourceFile.read(buf, 2 * BUFFER_MAX);
     } else {
-      cout << "cannot open" << endl;
+      // 无法打开需要解析的源代码文件
+      assert(false);
     }
   }
 
@@ -49,7 +50,7 @@ public:
   }
 
   void addRE (string& re, TokenType type) {
-    cout << "RE: " << escape(re) << endl;
+//    cout << "RE: " << escape(re) << endl;
     RETree tree(re);
 //    tree.print();
     NFA nfa(tree);
@@ -61,58 +62,89 @@ public:
     list.push_back(pair<WrapFA, TokenType>(WrapFA(min), type));
   }
 
+  char nextChar () {
+    if (!buf.empty() && bufAt < buf.length()) {
+      char c = buf[bufAt];
+      bufAt += 1;
+      return c;
+    } else {
+      char c = sourceFile.get();
+      buf.push_back(c);
+      bufAt += 1;
+      return c;
+    }
+  }
+  /**
+   * 回退n个字符
+   * @param n
+   */
+  void goBack (int n) {
+    assert(bufAt - n >= 0);
+    bufAt -= n;
+  }
+
   Token nextToken () {
+    string lex;
+    TokenType type = TokenType::none;
     for (auto item : list) {
       WrapFA& wfa = item.first;
-      string lex;
-      int start = at;
-      char c = buf[at];
-      int len = 0;
-      if (c == EMPTY) {
-        return Token(TokenType::eof);
+      string temp;
+      char c = nextChar();
+      if (c == char_traits<char>::eof()) {
+        type = TokenType::eof;
+        break;
       }
-      while (c != EMPTY && wfa.accept(c)) {
-        lex += c;
-        len += 1;
-        if (len > BUFFER_MAX) {
-          cout << "token 过长" << endl;
-          break;
-        }
-        at = (at + 1) % (2 * BUFFER_MAX);
-        c = buf[at];
+      while (wfa.accept(c)) {
+        temp += c;
+        c = nextChar();
       }
+      goBack(1);
       bool isFinish = wfa.isFinish();
+      if (!isFinish && wfa.getPrevFinishedDelta() > 0) {
+        int backLen = wfa.getPrevFinishedDelta();
+        temp = temp.substr(0, temp.size() - backLen);
+        goBack(backLen);
+        isFinish = true;
+      }
       wfa.reset();
-      if (len > BUFFER_MAX) {
-        at = start;
-      } else {
-        if (isFinish) {
-          if (at < BUFFER_MAX && len > at) {
-            sourceFile.read(buf + BUFFER_MAX, BUFFER_MAX);
-            int count = sourceFile.gcount();
-            if (count < BUFFER_MAX) {
-              buf[BUFFER_MAX + count] = EMPTY;
-            }
-          } else if (at >= BUFFER_MAX && at - len < BUFFER_MAX) {
-            sourceFile.read(buf, BUFFER_MAX);
-            int count = sourceFile.gcount();
-            if (count < BUFFER_MAX) {
-              buf[count] = EMPTY;
-            }
-          }
-          if (item.second == TokenType::space) {
-            return nextToken();
-          }
-          return Token(item.second, lex);
-        } else if (c == EMPTY) {
-          cout << "源码结束但是解析未完成" << endl;
-          break;
+      if (isFinish) {
+        if (temp.length() <= lex.length()) {
+          // 当前找到的token比前面找到的短，所以丢弃
+          continue;
         } else {
-          at = start;
+          // 当前找到的token比前面找到的长，使用新的
+          type = item.second;
+          lex = temp;
+        }
+      } else {
+        if (temp.length() > lex.length()) {
+          // 当前没有找到token且消耗的字符比前一个token长，则回退
+          goBack(temp.length() - lex.length());
         }
       }
+      bufAt = 0;
     }
-    return Token(TokenType::eof);
+
+    // 为none说明没有找到匹配的token，源码有误
+    assert(type != TokenType::none);
+
+    buf = buf.substr(lex.length(), buf.length() - lex.length());
+    bufAt = 0;
+
+    if (type == TokenType::space) {
+      return nextToken();
+    }
+    return Token(type, lex);
+  }
+
+  string getAllToken () {
+    string res;
+    Token t = nextToken();
+    while (!t.is(TokenType::eof)) {
+      res += t.getDesc() + "\n";
+      t = nextToken();
+    }
+    return res;
   }
 };
 

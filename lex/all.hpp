@@ -138,16 +138,14 @@ class WrapFA {
 private:
   FA* fa;
   FA::State* current;
-  unordered_map<int, unordered_map<char, int>> deltas;
-  int current2;
+  int at;
+  vector<int> finishedLength;
 public:
   explicit WrapFA (FA* fa);
   bool accept (char c);
+  int getPrevFinishedDelta ();
   bool isFinish ();
   void reset ();
-  bool accept2 (char c);
-  bool isFinish2 ();
-  void reset2 ();
 };
 
 #endif //EAC2_WRAPLEX_HPP
