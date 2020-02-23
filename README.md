@@ -2,7 +2,7 @@
 
 Engineering a Compiler, Second Edition
 
-C++实现，目前可以根据定义编程语言，解析对于的源码到抽象语法树。下面示例展示PL/0语言的解析。更多内容请看`spec/pl0.hpp`文件
+C++实现，目前可以根据定义编程语言，解析对于的源码到抽象语法树。下面示例展示PL/0语言的解析。更多内容请看`spec/pl0/pl0.hpp`文件
 
 词法定义:
 ```c++
@@ -336,6 +336,6 @@ int main (int argc, char *argv[]) {
 }
 ```
 
-例如解析`spec/test.pl0`源码的输出可以查看根目录的output.txt文件。
+例如解析`spec/pl0/test.pl0`源码的输出可以查看根目录的output.txt文件。
 
 

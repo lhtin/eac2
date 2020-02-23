@@ -1,1123 +1,181 @@
-Now: 1581513255890354
-------print RE Tree start-----
-(Select
-  (Connect
-    (Leaf "c")
-    (Connect
-      (Leaf "o")
-      (Connect
-        (Leaf "n")
-        (Connect
-          (Leaf "s")
-          (Leaf "t")
-        )
-      )
-    )
-  )
-  (Select
-    (Connect
-      (Leaf "v")
-      (Connect
-        (Leaf "a")
-        (Leaf "r")
-      )
-    )
-    (Select
-      (Connect
-        (Leaf "p")
-        (Connect
-          (Leaf "r")
-          (Connect
-            (Leaf "o")
-            (Connect
-              (Leaf "c")
-              (Connect
-                (Leaf "e")
-                (Connect
-                  (Leaf "d")
-                  (Connect
-                    (Leaf "u")
-                    (Connect
-                      (Leaf "r")
-                      (Leaf "e")
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-      (Select
-        (Connect
-          (Leaf "c")
-          (Connect
-            (Leaf "a")
-            (Connect
-              (Leaf "l")
-              (Leaf "l")
-            )
-          )
-        )
-        (Select
-          (Connect
-            (Leaf "b")
-            (Connect
-              (Leaf "e")
-              (Connect
-                (Leaf "g")
-                (Connect
-                  (Leaf "i")
-                  (Leaf "n")
-                )
-              )
-            )
-          )
-          (Select
-            (Connect
-              (Leaf "e")
-              (Connect
-                (Leaf "n")
-                (Leaf "d")
-              )
-            )
-            (Select
-              (Connect
-                (Leaf "w")
-                (Connect
-                  (Leaf "h")
-                  (Connect
-                    (Leaf "i")
-                    (Connect
-                      (Leaf "l")
-                      (Leaf "e")
-                    )
-                  )
-                )
-              )
-              (Select
-                (Connect
-                  (Leaf "d")
-                  (Leaf "o")
-                )
-                (Select
-                  (Connect
-                    (Leaf "o")
-                    (Connect
-                      (Leaf "d")
-                      (Leaf "d")
-                    )
-                  )
-                  (Select
-                    (Connect
-                      (Leaf "i")
-                      (Leaf "f")
-                    )
-                    (Select
-                      (Connect
-                        (Leaf "t")
-                        (Connect
-                          (Leaf "h")
-                          (Connect
-                            (Leaf "e")
-                            (Leaf "n")
-                          )
-                        )
-                      )
-                      (Select
-                        (Leaf "=")
-                        (Select
-                          (Leaf ",")
-                          (Select
-                            (Leaf ";")
-                            (Select
-                              (Connect
-                                (Leaf ":")
-                                (Leaf "=")
-                              )
-                              (Select
-                                (Leaf "?")
-                                (Select
-                                  (Leaf "!")
-                                  (Select
-                                    (Leaf "#")
-                                    (Select
-                                      (Leaf "<")
-                                      (Select
-                                        (Connect
-                                          (Leaf "<")
-                                          (Leaf "=")
-                                        )
-                                        (Select
-                                          (Leaf ">")
-                                          (Select
-                                            (Connect
-                                              (Leaf ">")
-                                              (Leaf "=")
-                                            )
-                                            (Select
-                                              (Leaf "+")
-                                              (Select
-                                                (Leaf "-")
-                                                (Select
-                                                  (Leaf "*")
-                                                  (Select
-                                                    (Leaf "/")
-                                                    (Select
-                                                      (Leaf "(")
-                                                      (Select
-                                                        (Leaf ")")
-                                                        (Leaf ".")
-                                                      )
-                                                    )
-                                                  )
-                                                )
-                                              )
-                                            )
-                                          )
-                                        )
-                                      )
-                                    )
-                                  )
-                                )
-                              )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  )
-)
-------print RE Tree end-----
------RE2NFA start-----
-Now: 1581513255891660
-S: s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s14 s15 s16 s17 s18 s19 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s36 s37 s38 s39 s42 s43 s44 s45 s46 s47 s48 s49 s52 s53 s54 s55 s56 s57 s58 s59 s60 s61 s64 s65 s66 s67 s68 s69 s72 s73 s74 s75 s76 s77 s78 s79 s80 s81 s84 s85 s86 s87 s90 s91 s92 s93 s94 s95 s98 s99 s100 s101 s104 s105 s106 s107 s108 s109 s110 s111 s114 s115 s118 s119 s122 s123 s126 s127 s128 s129 s132 s133 s136 s137 s140 s141 s144 s145 s148 s149 s150 s151 s154 s155 s158 s159 s160 s161 s164 s165 s168 s169 s172 s173 s176 s177 s180 s181 s184 s185 s186 s187 s182 s183 s178 s179 s174 s175 s170 s171 s166 s167 s162 s163 s156 s157 s152 s153 s146 s147 s142 s143 s138 s139 s134 s135 s130 s131 s124 s125 s120 s121 s116 s117 s112 s113 s102 s103 s96 s97 s88 s89 s82 s83 s70 s71 s62 s63 s50 s51 s40 s41 s20 s21 s12 s13 s0 s1
-chars: ! # ( ) * + , - . / : ; < = > ? a b c d e f g h i l n o p r s t u v w
-δ: 215
-  s2 -->|c| s3
-  s4 -->|o| s5
-  s6 -->|n| s7
-  s8 -->|s| s9
-  s10 -->|t| s11
-  s9 -->|ε| s10
-  s7 -->|ε| s8
-  s5 -->|ε| s6
-  s3 -->|ε| s4
-  s14 -->|v| s15
-  s16 -->|a| s17
-  s18 -->|r| s19
-  s17 -->|ε| s18
-  s15 -->|ε| s16
-  s22 -->|p| s23
-  s24 -->|r| s25
-  s26 -->|o| s27
-  s28 -->|c| s29
-  s30 -->|e| s31
-  s32 -->|d| s33
-  s34 -->|u| s35
-  s36 -->|r| s37
-  s38 -->|e| s39
-  s37 -->|ε| s38
-  s35 -->|ε| s36
-  s33 -->|ε| s34
-  s31 -->|ε| s32
-  s29 -->|ε| s30
-  s27 -->|ε| s28
-  s25 -->|ε| s26
-  s23 -->|ε| s24
-  s42 -->|c| s43
-  s44 -->|a| s45
-  s46 -->|l| s47
-  s48 -->|l| s49
-  s47 -->|ε| s48
-  s45 -->|ε| s46
-  s43 -->|ε| s44
-  s52 -->|b| s53
-  s54 -->|e| s55
-  s56 -->|g| s57
-  s58 -->|i| s59
-  s60 -->|n| s61
-  s59 -->|ε| s60
-  s57 -->|ε| s58
-  s55 -->|ε| s56
-  s53 -->|ε| s54
-  s64 -->|e| s65
-  s66 -->|n| s67
-  s68 -->|d| s69
-  s67 -->|ε| s68
-  s65 -->|ε| s66
-  s72 -->|w| s73
-  s74 -->|h| s75
-  s76 -->|i| s77
-  s78 -->|l| s79
-  s80 -->|e| s81
-  s79 -->|ε| s80
-  s77 -->|ε| s78
-  s75 -->|ε| s76
-  s73 -->|ε| s74
-  s84 -->|d| s85
-  s86 -->|o| s87
-  s85 -->|ε| s86
-  s90 -->|o| s91
-  s92 -->|d| s93
-  s94 -->|d| s95
-  s93 -->|ε| s94
-  s91 -->|ε| s92
-  s98 -->|i| s99
-  s100 -->|f| s101
-  s99 -->|ε| s100
-  s104 -->|t| s105
-  s106 -->|h| s107
-  s108 -->|e| s109
-  s110 -->|n| s111
-  s109 -->|ε| s110
-  s107 -->|ε| s108
-  s105 -->|ε| s106
-  s114 -->|=| s115
-  s118 -->|,| s119
-  s122 -->|;| s123
-  s126 -->|:| s127
-  s128 -->|=| s129
-  s127 -->|ε| s128
-  s132 -->|?| s133
-  s136 -->|!| s137
-  s140 -->|#| s141
-  s144 -->|<| s145
-  s148 -->|<| s149
-  s150 -->|=| s151
-  s149 -->|ε| s150
-  s154 -->|>| s155
-  s158 -->|>| s159
-  s160 -->|=| s161
-  s159 -->|ε| s160
-  s164 -->|+| s165
-  s168 -->|-| s169
-  s172 -->|*| s173
-  s176 -->|/| s177
-  s180 -->|(| s181
-  s184 -->|)| s185
-  s186 -->|.| s187
-  s182 -->|ε| s184
-  s182 -->|ε| s186
-  s185 -->|ε| s183
-  s187 -->|ε| s183
-  s178 -->|ε| s180
-  s178 -->|ε| s182
-  s181 -->|ε| s179
-  s183 -->|ε| s179
-  s174 -->|ε| s176
-  s174 -->|ε| s178
-  s177 -->|ε| s175
-  s179 -->|ε| s175
-  s170 -->|ε| s172
-  s170 -->|ε| s174
-  s173 -->|ε| s171
-  s175 -->|ε| s171
-  s166 -->|ε| s168
-  s166 -->|ε| s170
-  s169 -->|ε| s167
-  s171 -->|ε| s167
-  s162 -->|ε| s164
-  s162 -->|ε| s166
-  s165 -->|ε| s163
-  s167 -->|ε| s163
-  s156 -->|ε| s158
-  s156 -->|ε| s162
-  s161 -->|ε| s157
-  s163 -->|ε| s157
-  s152 -->|ε| s154
-  s152 -->|ε| s156
-  s155 -->|ε| s153
-  s157 -->|ε| s153
-  s146 -->|ε| s148
-  s146 -->|ε| s152
-  s151 -->|ε| s147
-  s153 -->|ε| s147
-  s142 -->|ε| s144
-  s142 -->|ε| s146
-  s145 -->|ε| s143
-  s147 -->|ε| s143
-  s138 -->|ε| s140
-  s138 -->|ε| s142
-  s141 -->|ε| s139
-  s143 -->|ε| s139
-  s134 -->|ε| s136
-  s134 -->|ε| s138
-  s137 -->|ε| s135
-  s139 -->|ε| s135
-  s130 -->|ε| s132
-  s130 -->|ε| s134
-  s133 -->|ε| s131
-  s135 -->|ε| s131
-  s124 -->|ε| s126
-  s124 -->|ε| s130
-  s129 -->|ε| s125
-  s131 -->|ε| s125
-  s120 -->|ε| s122
-  s120 -->|ε| s124
-  s123 -->|ε| s121
-  s125 -->|ε| s121
-  s116 -->|ε| s118
-  s116 -->|ε| s120
-  s119 -->|ε| s117
-  s121 -->|ε| s117
-  s112 -->|ε| s114
-  s112 -->|ε| s116
-  s115 -->|ε| s113
-  s117 -->|ε| s113
-  s102 -->|ε| s104
-  s102 -->|ε| s112
-  s111 -->|ε| s103
-  s113 -->|ε| s103
-  s96 -->|ε| s98
-  s96 -->|ε| s102
-  s101 -->|ε| s97
-  s103 -->|ε| s97
-  s88 -->|ε| s90
-  s88 -->|ε| s96
-  s95 -->|ε| s89
-  s97 -->|ε| s89
-  s82 -->|ε| s84
-  s82 -->|ε| s88
-  s87 -->|ε| s83
-  s89 -->|ε| s83
-  s70 -->|ε| s72
-  s70 -->|ε| s82
-  s81 -->|ε| s71
-  s83 -->|ε| s71
-  s62 -->|ε| s64
-  s62 -->|ε| s70
-  s69 -->|ε| s63
-  s71 -->|ε| s63
-  s50 -->|ε| s52
-  s50 -->|ε| s62
-  s61 -->|ε| s51
-  s63 -->|ε| s51
-  s40 -->|ε| s42
-  s40 -->|ε| s50
-  s49 -->|ε| s41
-  s51 -->|ε| s41
-  s20 -->|ε| s22
-  s20 -->|ε| s40
-  s39 -->|ε| s21
-  s41 -->|ε| s21
-  s12 -->|ε| s14
-  s12 -->|ε| s20
-  s19 -->|ε| s13
-  s21 -->|ε| s13
-  s0 -->|ε| s2
-  s0 -->|ε| s12
-  s11 -->|ε| s1
-  s13 -->|ε| s1
-s0: s0
-SA: s3 s5 s7 s9 s11 s11 s11 s11 s11 s15 s17 s19 s19 s19 s23 s25 s27 s29 s31 s33 s35 s37 s39 s39 s39 s39 s39 s39 s39 s39 s39 s43 s45 s47 s49 s49 s49 s49 s53 s55 s57 s59 s61 s61 s61 s61 s61 s65 s67 s69 s69 s69 s73 s75 s77 s79 s81 s81 s81 s81 s81 s85 s87 s87 s91 s93 s95 s95 s95 s99 s101 s101 s105 s107 s109 s111 s111 s111 s111 s115 s119 s123 s127 s129 s129 s133 s137 s141 s145 s149 s151 s151 s155 s159 s161 s161 s165 s169 s173 s177 s181 s185 s187 s183 s179 s175 s171 s167 s163 s157 s153 s147 s143 s139 s135 s131 s125 s121 s117 s113 s103 s97 s89 s83 s71 s63 s51 s41 s21 s13 s1
------RE2NFA end-----
------NFA2DFA start-----
-Now: 1581513255975894
-S: s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s36 s37 s38 s39 s40 s41 s42 s43 s44 s45 s46 s47 s48 s49 s50 s51 s52 s53 s54 s55 s56 s57 s58 s59 s60 s61 s62 s63
-chars: ! # ( ) * + , - . / : ; < = > ? a b c d e f g h i l n o p r s t u v w
-δ: 63
-  s0 -->|!| s1
-  s0 -->|#| s2
-  s0 -->|(| s3
-  s0 -->|)| s4
-  s0 -->|*| s5
-  s0 -->|+| s6
-  s0 -->|,| s7
-  s0 -->|-| s8
-  s0 -->|.| s9
-  s0 -->|/| s10
-  s0 -->|:| s11
-  s11 -->|=| s12
-  s0 -->|;| s13
-  s0 -->|<| s14
-  s14 -->|=| s15
-  s0 -->|=| s16
-  s0 -->|>| s17
-  s17 -->|=| s18
-  s0 -->|?| s19
-  s0 -->|b| s20
-  s20 -->|e| s21
-  s21 -->|g| s22
-  s22 -->|i| s23
-  s23 -->|n| s24
-  s0 -->|c| s25
-  s25 -->|a| s26
-  s26 -->|l| s27
-  s27 -->|l| s28
-  s25 -->|o| s29
-  s29 -->|n| s30
-  s30 -->|s| s31
-  s31 -->|t| s32
-  s0 -->|d| s33
-  s33 -->|o| s34
-  s0 -->|e| s35
-  s35 -->|n| s36
-  s36 -->|d| s37
-  s0 -->|i| s38
-  s38 -->|f| s39
-  s0 -->|o| s40
-  s40 -->|d| s41
-  s41 -->|d| s42
-  s0 -->|p| s43
-  s43 -->|r| s44
-  s44 -->|o| s45
-  s45 -->|c| s46
-  s46 -->|e| s47
-  s47 -->|d| s48
-  s48 -->|u| s49
-  s49 -->|r| s50
-  s50 -->|e| s51
-  s0 -->|t| s52
-  s52 -->|h| s53
-  s53 -->|e| s54
-  s54 -->|n| s55
-  s0 -->|v| s56
-  s56 -->|a| s57
-  s57 -->|r| s58
-  s0 -->|w| s59
-  s59 -->|h| s60
-  s60 -->|i| s61
-  s61 -->|l| s62
-  s62 -->|e| s63
-s0: s0
-SA: s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s12 s13 s14 s15 s16 s17 s18 s19 s24 s28 s32 s34 s37 s39 s42 s51 s55 s58 s63
------NFA2DFA end-----
------minDFA start-----
-Now: 1581513256059176
-S: s0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 s32 s33 s34 s35 s36 s37
-chars:
-δ: 63
-  s18 -->|!| s0
-  s18 -->|#| s0
-  s18 -->|(| s0
-  s18 -->|)| s0
-  s18 -->|*| s0
-  s18 -->|+| s0
-  s18 -->|,| s0
-  s18 -->|-| s0
-  s18 -->|.| s0
-  s18 -->|/| s0
-  s18 -->|:| s1
-  s1 -->|=| s0
-  s18 -->|;| s0
-  s18 -->|<| s19
-  s19 -->|=| s0
-  s18 -->|=| s0
-  s18 -->|>| s22
-  s22 -->|=| s0
-  s18 -->|?| s0
-  s18 -->|b| s2
-  s2 -->|e| s3
-  s3 -->|g| s4
-  s4 -->|i| s5
-  s5 -->|n| s0
-  s18 -->|c| s7
-  s7 -->|a| s6
-  s6 -->|l| s8
-  s8 -->|l| s0
-  s7 -->|o| s9
-  s9 -->|n| s10
-  s10 -->|s| s11
-  s11 -->|t| s0
-  s18 -->|d| s29
-  s29 -->|o| s0
-  s18 -->|e| s31
-  s31 -->|n| s30
-  s30 -->|d| s0
-  s18 -->|i| s32
-  s32 -->|f| s0
-  s18 -->|o| s34
-  s34 -->|d| s33
-  s33 -->|d| s0
-  s18 -->|p| s20
-  s20 -->|r| s21
-  s21 -->|o| s23
-  s23 -->|c| s24
-  s24 -->|e| s25
-  s25 -->|d| s36
-  s36 -->|u| s37
-  s37 -->|r| s35
-  s35 -->|e| s0
-  s18 -->|t| s12
-  s12 -->|h| s13
-  s13 -->|e| s14
-  s14 -->|n| s0
-  s18 -->|v| s16
-  s16 -->|a| s15
-  s15 -->|r| s0
-  s18 -->|w| s26
-  s26 -->|h| s27
-  s27 -->|i| s28
-  s28 -->|l| s17
-  s17 -->|e| s0
-s0: s18
-SA: s19 s22 s0
------minDFA end-----
-------print RE Tree start-----
-(Connect
-  (Leaf "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z")
-  (Closure
-    (Leaf "0|1|2|3|4|5|6|7|8|9|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|_|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z")
-  )
-)
-------print RE Tree end-----
------RE2NFA start-----
-Now: 1581513256060042
-S: s0 s1 s4 s5 s2 s3
-chars: 0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z _ a b c d e f g h i j k l m n o p q r s t u v w x y z
-δ: 7
-  s0 -->|A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,_,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z| s1
-  s4 -->|0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,_,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z| s5
-  s2 -->|ε| s4
-  s5 -->|ε| s3
-  s2 -->|ε| s3
-  s5 -->|ε| s4
-  s1 -->|ε| s2
-s0: s0
-SA: s1 s5 s3 s3
------RE2NFA end-----
------NFA2DFA start-----
-Now: 1581513256060575
-S: s0 s1 s2
-chars: 0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z _ a b c d e f g h i j k l m n o p q r s t u v w x y z
-δ: 179
-  s0 -->|A| s1
-  s1 -->|0| s2
-  s2 -->|0| s2
-  s2 -->|1| s2
-  s2 -->|2| s2
-  s2 -->|3| s2
-  s2 -->|4| s2
-  s2 -->|5| s2
-  s2 -->|6| s2
-  s2 -->|7| s2
-  s2 -->|8| s2
-  s2 -->|9| s2
-  s2 -->|A| s2
-  s2 -->|B| s2
-  s2 -->|C| s2
-  s2 -->|D| s2
-  s2 -->|E| s2
-  s2 -->|F| s2
-  s2 -->|G| s2
-  s2 -->|H| s2
-  s2 -->|I| s2
-  s2 -->|J| s2
-  s2 -->|K| s2
-  s2 -->|L| s2
-  s2 -->|M| s2
-  s2 -->|N| s2
-  s2 -->|O| s2
-  s2 -->|P| s2
-  s2 -->|Q| s2
-  s2 -->|R| s2
-  s2 -->|S| s2
-  s2 -->|T| s2
-  s2 -->|U| s2
-  s2 -->|V| s2
-  s2 -->|W| s2
-  s2 -->|X| s2
-  s2 -->|Y| s2
-  s2 -->|Z| s2
-  s2 -->|_| s2
-  s2 -->|a| s2
-  s2 -->|b| s2
-  s2 -->|c| s2
-  s2 -->|d| s2
-  s2 -->|e| s2
-  s2 -->|f| s2
-  s2 -->|g| s2
-  s2 -->|h| s2
-  s2 -->|i| s2
-  s2 -->|j| s2
-  s2 -->|k| s2
-  s2 -->|l| s2
-  s2 -->|m| s2
-  s2 -->|n| s2
-  s2 -->|o| s2
-  s2 -->|p| s2
-  s2 -->|q| s2
-  s2 -->|r| s2
-  s2 -->|s| s2
-  s2 -->|t| s2
-  s2 -->|u| s2
-  s2 -->|v| s2
-  s2 -->|w| s2
-  s2 -->|x| s2
-  s2 -->|y| s2
-  s2 -->|z| s2
-  s1 -->|1| s2
-  s1 -->|2| s2
-  s1 -->|3| s2
-  s1 -->|4| s2
-  s1 -->|5| s2
-  s1 -->|6| s2
-  s1 -->|7| s2
-  s1 -->|8| s2
-  s1 -->|9| s2
-  s1 -->|A| s2
-  s1 -->|B| s2
-  s1 -->|C| s2
-  s1 -->|D| s2
-  s1 -->|E| s2
-  s1 -->|F| s2
-  s1 -->|G| s2
-  s1 -->|H| s2
-  s1 -->|I| s2
-  s1 -->|J| s2
-  s1 -->|K| s2
-  s1 -->|L| s2
-  s1 -->|M| s2
-  s1 -->|N| s2
-  s1 -->|O| s2
-  s1 -->|P| s2
-  s1 -->|Q| s2
-  s1 -->|R| s2
-  s1 -->|S| s2
-  s1 -->|T| s2
-  s1 -->|U| s2
-  s1 -->|V| s2
-  s1 -->|W| s2
-  s1 -->|X| s2
-  s1 -->|Y| s2
-  s1 -->|Z| s2
-  s1 -->|_| s2
-  s1 -->|a| s2
-  s1 -->|b| s2
-  s1 -->|c| s2
-  s1 -->|d| s2
-  s1 -->|e| s2
-  s1 -->|f| s2
-  s1 -->|g| s2
-  s1 -->|h| s2
-  s1 -->|i| s2
-  s1 -->|j| s2
-  s1 -->|k| s2
-  s1 -->|l| s2
-  s1 -->|m| s2
-  s1 -->|n| s2
-  s1 -->|o| s2
-  s1 -->|p| s2
-  s1 -->|q| s2
-  s1 -->|r| s2
-  s1 -->|s| s2
-  s1 -->|t| s2
-  s1 -->|u| s2
-  s1 -->|v| s2
-  s1 -->|w| s2
-  s1 -->|x| s2
-  s1 -->|y| s2
-  s1 -->|z| s2
-  s0 -->|B| s1
-  s0 -->|C| s1
-  s0 -->|D| s1
-  s0 -->|E| s1
-  s0 -->|F| s1
-  s0 -->|G| s1
-  s0 -->|H| s1
-  s0 -->|I| s1
-  s0 -->|J| s1
-  s0 -->|K| s1
-  s0 -->|L| s1
-  s0 -->|M| s1
-  s0 -->|N| s1
-  s0 -->|O| s1
-  s0 -->|P| s1
-  s0 -->|Q| s1
-  s0 -->|R| s1
-  s0 -->|S| s1
-  s0 -->|T| s1
-  s0 -->|U| s1
-  s0 -->|V| s1
-  s0 -->|W| s1
-  s0 -->|X| s1
-  s0 -->|Y| s1
-  s0 -->|Z| s1
-  s0 -->|_| s1
-  s0 -->|a| s1
-  s0 -->|b| s1
-  s0 -->|c| s1
-  s0 -->|d| s1
-  s0 -->|e| s1
-  s0 -->|f| s1
-  s0 -->|g| s1
-  s0 -->|h| s1
-  s0 -->|i| s1
-  s0 -->|j| s1
-  s0 -->|k| s1
-  s0 -->|l| s1
-  s0 -->|m| s1
-  s0 -->|n| s1
-  s0 -->|o| s1
-  s0 -->|p| s1
-  s0 -->|q| s1
-  s0 -->|r| s1
-  s0 -->|s| s1
-  s0 -->|t| s1
-  s0 -->|u| s1
-  s0 -->|v| s1
-  s0 -->|w| s1
-  s0 -->|x| s1
-  s0 -->|y| s1
-  s0 -->|z| s1
-s0: s0
-SA: s1 s2
------NFA2DFA end-----
------minDFA start-----
-Now: 1581513256062237
-S: s0 s1
-chars:
-δ: 179
-  s1 -->|A| s0
-  s0 -->|0| s0
-  s0 -->|0| s0
-  s0 -->|1| s0
-  s0 -->|2| s0
-  s0 -->|3| s0
-  s0 -->|4| s0
-  s0 -->|5| s0
-  s0 -->|6| s0
-  s0 -->|7| s0
-  s0 -->|8| s0
-  s0 -->|9| s0
-  s0 -->|A| s0
-  s0 -->|B| s0
-  s0 -->|C| s0
-  s0 -->|D| s0
-  s0 -->|E| s0
-  s0 -->|F| s0
-  s0 -->|G| s0
-  s0 -->|H| s0
-  s0 -->|I| s0
-  s0 -->|J| s0
-  s0 -->|K| s0
-  s0 -->|L| s0
-  s0 -->|M| s0
-  s0 -->|N| s0
-  s0 -->|O| s0
-  s0 -->|P| s0
-  s0 -->|Q| s0
-  s0 -->|R| s0
-  s0 -->|S| s0
-  s0 -->|T| s0
-  s0 -->|U| s0
-  s0 -->|V| s0
-  s0 -->|W| s0
-  s0 -->|X| s0
-  s0 -->|Y| s0
-  s0 -->|Z| s0
-  s0 -->|_| s0
-  s0 -->|a| s0
-  s0 -->|b| s0
-  s0 -->|c| s0
-  s0 -->|d| s0
-  s0 -->|e| s0
-  s0 -->|f| s0
-  s0 -->|g| s0
-  s0 -->|h| s0
-  s0 -->|i| s0
-  s0 -->|j| s0
-  s0 -->|k| s0
-  s0 -->|l| s0
-  s0 -->|m| s0
-  s0 -->|n| s0
-  s0 -->|o| s0
-  s0 -->|p| s0
-  s0 -->|q| s0
-  s0 -->|r| s0
-  s0 -->|s| s0
-  s0 -->|t| s0
-  s0 -->|u| s0
-  s0 -->|v| s0
-  s0 -->|w| s0
-  s0 -->|x| s0
-  s0 -->|y| s0
-  s0 -->|z| s0
-  s0 -->|1| s0
-  s0 -->|2| s0
-  s0 -->|3| s0
-  s0 -->|4| s0
-  s0 -->|5| s0
-  s0 -->|6| s0
-  s0 -->|7| s0
-  s0 -->|8| s0
-  s0 -->|9| s0
-  s0 -->|A| s0
-  s0 -->|B| s0
-  s0 -->|C| s0
-  s0 -->|D| s0
-  s0 -->|E| s0
-  s0 -->|F| s0
-  s0 -->|G| s0
-  s0 -->|H| s0
-  s0 -->|I| s0
-  s0 -->|J| s0
-  s0 -->|K| s0
-  s0 -->|L| s0
-  s0 -->|M| s0
-  s0 -->|N| s0
-  s0 -->|O| s0
-  s0 -->|P| s0
-  s0 -->|Q| s0
-  s0 -->|R| s0
-  s0 -->|S| s0
-  s0 -->|T| s0
-  s0 -->|U| s0
-  s0 -->|V| s0
-  s0 -->|W| s0
-  s0 -->|X| s0
-  s0 -->|Y| s0
-  s0 -->|Z| s0
-  s0 -->|_| s0
-  s0 -->|a| s0
-  s0 -->|b| s0
-  s0 -->|c| s0
-  s0 -->|d| s0
-  s0 -->|e| s0
-  s0 -->|f| s0
-  s0 -->|g| s0
-  s0 -->|h| s0
-  s0 -->|i| s0
-  s0 -->|j| s0
-  s0 -->|k| s0
-  s0 -->|l| s0
-  s0 -->|m| s0
-  s0 -->|n| s0
-  s0 -->|o| s0
-  s0 -->|p| s0
-  s0 -->|q| s0
-  s0 -->|r| s0
-  s0 -->|s| s0
-  s0 -->|t| s0
-  s0 -->|u| s0
-  s0 -->|v| s0
-  s0 -->|w| s0
-  s0 -->|x| s0
-  s0 -->|y| s0
-  s0 -->|z| s0
-  s1 -->|B| s0
-  s1 -->|C| s0
-  s1 -->|D| s0
-  s1 -->|E| s0
-  s1 -->|F| s0
-  s1 -->|G| s0
-  s1 -->|H| s0
-  s1 -->|I| s0
-  s1 -->|J| s0
-  s1 -->|K| s0
-  s1 -->|L| s0
-  s1 -->|M| s0
-  s1 -->|N| s0
-  s1 -->|O| s0
-  s1 -->|P| s0
-  s1 -->|Q| s0
-  s1 -->|R| s0
-  s1 -->|S| s0
-  s1 -->|T| s0
-  s1 -->|U| s0
-  s1 -->|V| s0
-  s1 -->|W| s0
-  s1 -->|X| s0
-  s1 -->|Y| s0
-  s1 -->|Z| s0
-  s1 -->|_| s0
-  s1 -->|a| s0
-  s1 -->|b| s0
-  s1 -->|c| s0
-  s1 -->|d| s0
-  s1 -->|e| s0
-  s1 -->|f| s0
-  s1 -->|g| s0
-  s1 -->|h| s0
-  s1 -->|i| s0
-  s1 -->|j| s0
-  s1 -->|k| s0
-  s1 -->|l| s0
-  s1 -->|m| s0
-  s1 -->|n| s0
-  s1 -->|o| s0
-  s1 -->|p| s0
-  s1 -->|q| s0
-  s1 -->|r| s0
-  s1 -->|s| s0
-  s1 -->|t| s0
-  s1 -->|u| s0
-  s1 -->|v| s0
-  s1 -->|w| s0
-  s1 -->|x| s0
-  s1 -->|y| s0
-  s1 -->|z| s0
-s0: s1
-SA: s0
------minDFA end-----
-------print RE Tree start-----
-(Connect
-  (Leaf "0|1|2|3|4|5|6|7|8|9")
-  (Closure
-    (Leaf "0|1|2|3|4|5|6|7|8|9")
-  )
-)
-------print RE Tree end-----
------RE2NFA start-----
-Now: 1581513256063413
-S: s0 s1 s4 s5 s2 s3
-chars: 0 1 2 3 4 5 6 7 8 9
-δ: 7
-  s0 -->|0,1,2,3,4,5,6,7,8,9| s1
-  s4 -->|0,1,2,3,4,5,6,7,8,9| s5
-  s2 -->|ε| s4
-  s5 -->|ε| s3
-  s2 -->|ε| s3
-  s5 -->|ε| s4
-  s1 -->|ε| s2
-s0: s0
-SA: s1 s5 s3 s3
------RE2NFA end-----
------NFA2DFA start-----
-Now: 1581513256063572
-S: s0 s1 s2
-chars: 0 1 2 3 4 5 6 7 8 9
-δ: 30
-  s0 -->|0| s1
-  s1 -->|0| s2
-  s2 -->|0| s2
-  s2 -->|1| s2
-  s2 -->|2| s2
-  s2 -->|3| s2
-  s2 -->|4| s2
-  s2 -->|5| s2
-  s2 -->|6| s2
-  s2 -->|7| s2
-  s2 -->|8| s2
-  s2 -->|9| s2
-  s1 -->|1| s2
-  s1 -->|2| s2
-  s1 -->|3| s2
-  s1 -->|4| s2
-  s1 -->|5| s2
-  s1 -->|6| s2
-  s1 -->|7| s2
-  s1 -->|8| s2
-  s1 -->|9| s2
-  s0 -->|1| s1
-  s0 -->|2| s1
-  s0 -->|3| s1
-  s0 -->|4| s1
-  s0 -->|5| s1
-  s0 -->|6| s1
-  s0 -->|7| s1
-  s0 -->|8| s1
-  s0 -->|9| s1
-s0: s0
-SA: s1 s2
------NFA2DFA end-----
------minDFA start-----
-Now: 1581513256063877
-S: s0 s1
-chars:
-δ: 30
-  s1 -->|0| s0
-  s0 -->|0| s0
-  s0 -->|0| s0
-  s0 -->|1| s0
-  s0 -->|2| s0
-  s0 -->|3| s0
-  s0 -->|4| s0
-  s0 -->|5| s0
-  s0 -->|6| s0
-  s0 -->|7| s0
-  s0 -->|8| s0
-  s0 -->|9| s0
-  s0 -->|1| s0
-  s0 -->|2| s0
-  s0 -->|3| s0
-  s0 -->|4| s0
-  s0 -->|5| s0
-  s0 -->|6| s0
-  s0 -->|7| s0
-  s0 -->|8| s0
-  s0 -->|9| s0
-  s1 -->|1| s0
-  s1 -->|2| s0
-  s1 -->|3| s0
-  s1 -->|4| s0
-  s1 -->|5| s0
-  s1 -->|6| s0
-  s1 -->|7| s0
-  s1 -->|8| s0
-  s1 -->|9| s0
-s0: s1
-SA: s0
------minDFA end-----
-------print RE Tree start-----
-(Connect
-  (Leaf "\t|\n|\s")
-  (Closure
-    (Leaf "\t|\n|\s")
-  )
-)
-------print RE Tree end-----
------RE2NFA start-----
-Now: 1581513256064153
-S: s0 s1 s4 s5 s2 s3
-chars: 	 
-  
-δ: 7
-  s0 -->|\t,\n,\s| s1
-  s4 -->|\t,\n,\s| s5
-  s2 -->|ε| s4
-  s5 -->|ε| s3
-  s2 -->|ε| s3
-  s5 -->|ε| s4
-  s1 -->|ε| s2
-s0: s0
-SA: s1 s5 s3 s3
------RE2NFA end-----
------NFA2DFA start-----
-Now: 1581513256064259
-S: s0 s1 s2
-chars: 	 
-  
-δ: 9
-  s0 -->|\t| s1
-  s1 -->|\t| s2
-  s2 -->|\t| s2
-  s2 -->|\n| s2
-  s2 -->|\s| s2
-  s1 -->|\n| s2
-  s1 -->|\s| s2
-  s0 -->|\n| s1
-  s0 -->|\s| s1
-s0: s0
-SA: s1 s2
------NFA2DFA end-----
------minDFA start-----
-Now: 1581513256064396
-S: s0 s1
-chars:
-δ: 9
-  s1 -->|\t| s0
-  s0 -->|\t| s0
-  s0 -->|\t| s0
-  s0 -->|\n| s0
-  s0 -->|\s| s0
-  s0 -->|\n| s0
-  s0 -->|\s| s0
-  s1 -->|\n| s0
-  s1 -->|\s| s0
-s0: s1
-SA: s0
------minDFA end-----
-Now: 1581513256534562
+Now: 1582436439942053
+Now: 1582436439951424
+Tokens:
+keyword const
+space \s
+ident max
+space \s
+keyword =
+space \s
+number 100
+keyword ;
+space \n
+keyword var
+space \s
+ident arg
+keyword ,
+space \s
+ident ret
+keyword ;
+space \n\n
+keyword procedure
+space \s
+ident isprime
+keyword ;
+space \n
+keyword var
+space \s
+ident i
+keyword ;
+space \n
+keyword begin
+space \n\t
+ident ret
+space \s
+keyword :=
+space \s
+number 1
+keyword ;
+space \n\t
+ident i
+space \s
+keyword :=
+space \s
+number 2
+keyword ;
+space \n\t
+keyword while
+space \s
+ident i
+space \s
+keyword <
+space \s
+ident arg
+space \s
+keyword do
+space \n\t
+keyword begin
+space \n\t\t
+keyword if
+space \s
+ident arg
+space \s
+keyword /
+space \s
+ident i
+space \s
+keyword *
+space \s
+ident i
+space \s
+keyword =
+space \s
+ident arg
+space \s
+keyword then
+space \n\t\t
+keyword begin
+space \n\t\t\t
+ident ret
+space \s
+keyword :=
+space \s
+number 0
+keyword ;
+space \n\t\t\t
+ident i
+space \s
+keyword :=
+space \s
+ident arg
+space \n\t\t
+keyword end
+keyword ;
+space \n\t\t
+ident i
+space \s
+keyword :=
+space \s
+ident i
+space \s
+keyword +
+space \s
+number 1
+space \n\t
+keyword end
+space \n
+keyword end
+keyword ;
+space \n\n
+keyword procedure
+space \s
+ident primes
+keyword ;
+space \n
+keyword begin
+space \n\t
+ident arg
+space \s
+keyword :=
+space \s
+number 2
+keyword ;
+space \n\t
+keyword while
+space \s
+ident arg
+space \s
+keyword <
+space \s
+ident max
+space \s
+keyword do
+space \n\t
+keyword begin
+space \n\t\t
+keyword call
+space \s
+ident isprime
+keyword ;
+space \n\t\t
+keyword if
+space \s
+ident ret
+space \s
+keyword =
+space \s
+number 1
+space \s
+keyword then
+space \s
+keyword !
+space \s
+ident arg
+keyword ;
+space \n\t\t
+ident arg
+space \s
+keyword :=
+space \s
+ident arg
+space \s
+keyword +
+space \s
+number 1
+space \n\t
+keyword end
+space \n
+keyword end
+keyword ;
+space \n\n
+keyword call
+space \s
+ident primes
+space \n
+keyword .
+eof
+
+AST:
 Program
   Block
     Assign
@@ -1318,4 +376,3 @@ Program
       keyword call
       ident primes
   keyword .
-
