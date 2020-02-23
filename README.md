@@ -336,6 +336,6 @@ int main (int argc, char *argv[]) {
 }
 ```
 
-例如解析`spec/pl0/test.pl0`源码的输出可以查看根目录的output.txt文件。
+例如解析`spec/pl0/test1.pl0`源码的输出可以查看根目录的output.txt文件。
 
 
