@@ -1,8 +1,8 @@
-#ifndef EAC2_COMPILER_HPP
-#define EAC2_COMPILER_HPP
+#ifndef EAC2_PARSER_HPP
+#define EAC2_PARSER_HPP
 
-template <typename Lex, typename LR1>
-class compiler {
+template <typename Symbol, typename Lex, typename LR1>
+class parser {
 private:
   Lex& lex;
   LR1& lr1;
@@ -14,6 +14,8 @@ public:
   using Key = typename LR1::Key;
   using Production = typename LR1::Production;
   using AST = typename LR1::AST;
+  using SymbolType = typename Symbol::_SymbolType;
+  using TerminalSymbolType = typename Symbol::_TerminalSymbolType;
 
   class Output {
   public:
@@ -23,9 +25,9 @@ public:
   };
   Output o;
 
-  compiler (Lex& lex, LR1& lr1): lex(lex), lr1(lr1) {}
+  parser (Lex& lex, LR1& lr1): lex(lex), lr1(lr1) {}
 
-  Output parser (string source) {
+  Output getOutput (string source) {
     sourceFile = ifstream(source);
     if (sourceFile.is_open()) {
       buf = "";
