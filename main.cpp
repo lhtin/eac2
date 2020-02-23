@@ -7,6 +7,7 @@
 
 #include "spec/pl0/pl0.hpp" // 解析PL/0语言
 //#include "spec/()/().hpp"  // 解析括号语言
+//#include "spec/01/01.hpp" // 解析自定义的语言
 
 using namespace std;
 
@@ -17,8 +18,9 @@ int main (int argc, char *argv[]) {
   assert(argc >= 2);
 
   printNow();
-  My_Lex lex(PL0_LEX, string(argv[1])); // 第二个参数为需要编译的源码文件路径
-  My_LR1 lr1(PL0_CFG, NonterminalSymbolType::Program, lex);
+  My_Lex lex(LEX, string(argv[1])); // 第二个参数为需要编译的源码文件路径
+//  cout << lex.getAllToken();
+  My_LR1 lr1(CFG, NonterminalSymbolType::Program, lex);
   printNow();
 
   My_LR1::AST ast = lr1.getAST();

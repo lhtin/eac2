@@ -123,7 +123,7 @@ Symbol Symbol::getPureSymbol() {
   return *this;
 }
 
-const Spec::Lex<Symbol::_TerminalSymbolType> PL0_LEX{
+const Spec::Lex<Symbol::_TerminalSymbolType> LEX{
     {
         R"(const|var|procedure|call|begin|end|while|do|odd|if|then|=|,|;|:=|?|!|#|<|<=|>|>=|\+|-|\*|/|\(|\)|.)",
         TerminalSymbolType::keyword
@@ -142,7 +142,7 @@ const Spec::Lex<Symbol::_TerminalSymbolType> PL0_LEX{
     }
 };
 
-const Spec::CFG<Symbol> PL0_CFG{
+const Spec::CFG<Symbol> CFG{
     {
         Symbol(NonterminalSymbolType::Program),
         {

@@ -53,8 +53,7 @@ Symbol Symbol::getPureSymbol() {
 }
 
 // lex
-using Lex = Spec::Lex<Symbol::_TerminalSymbolType>;
-const Lex PARENTHESES_LEX = {
+const Spec::Lex<Symbol::_TerminalSymbolType> LEX = {
     {
         R"(\(|\))",
         TerminalSymbolType::keyword
@@ -66,8 +65,7 @@ const Lex PARENTHESES_LEX = {
 };
 
 // syntax
-using CFG = Spec::CFG<Symbol>;
-const CFG PARENTHESES_CFG{
+const Spec::CFG<Symbol> CFG{
     {
         Symbol(NonterminalSymbolType::Goal),
         {
