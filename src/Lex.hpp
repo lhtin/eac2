@@ -1,7 +1,3 @@
-//
-// Created by 丁乐华 on 2020/1/24.
-//
-
 #ifndef EAC2_LEX_HPP
 #define EAC2_LEX_HPP
 #include <string>
@@ -17,8 +13,6 @@
 #include "spec.hpp"
 
 using namespace std;
-
-const int BUFFER_MAX = 1024;
 
 template <typename Token>
 class Lex {
@@ -51,4 +45,4 @@ public:
   }
 };
 
-#endif //EAC2_WRAPLEX_HPP
+#endif

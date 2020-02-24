@@ -7,10 +7,12 @@ using namespace std;
 
 static char space = ' ';
 
-void RENode::expandRange (string& rre, int start, int end) {
+void RENode::expandRange (const string& rre, int start, int end) {
   for (int i = start; i <= end; i += 1) {
     char c0 = rre[i];
-    assert_with_msg(c0 != '-', "范围符(-)之前需要字符");
+    if (c0 == '\\') {
+      continue;
+    }
     chars.insert(c0);
     if (i + 1 <= end && rre[i + 1] == '-') {
       assert_with_msg(i + 2 <= end, "范围符(-)之后需要字符");
@@ -23,7 +25,7 @@ void RENode::expandRange (string& rre, int start, int end) {
   }
 }
 
-RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 : end - start + 1), left(nullptr), right(
+RENode::RENode (const string& re, int start, int end): re(re, start, end < start ? 0 : end - start + 1), left(nullptr), right(
     nullptr), child(nullptr), chars() {
   if (end < start) {
     op = Operator::LEAF;
@@ -37,7 +39,10 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
     char c = re[at];
     if (c == '\\') {
       // 如果是转义字符则跳过
+      // \\ \( \) \[ \] \* \+ \-
+      string t = "\\()[]*+-";
       assert_with_msg(at < end, "转义字符(\\)后面需要字符");
+      assert_with_msg(t.find(re[at + 1]) != string::npos, "转义字符(\\)后面只能是 " + t + " 中的一个，但是给的是 " + re[at + 1]);
       at += 1;
     } else if (c == '(') {
       assert_with_msg(bracketCount == 0, "小括号不能出现在中括号里面");
@@ -62,13 +67,20 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
   at = start;
   parenthesisCount = 0;
   bracketCount = 0;
+  bool isEscape = false;
   while (at <= end) {
     char c = re[at];
-    if (c == '(') {
+    if (c == '\\') {
+      isEscape = true;
+      at += 1;
+      continue;
+    }
+
+    if (!isEscape && c == '(') {
       parenthesisCount += 1;
-    } else if (c == '[') {
+    } else if (!isEscape && c == '[') {
       bracketCount += 1;
-    } else if (c == ')') {
+    } else if (!isEscape && c == ')') {
       parenthesisCount -= 1;
       if (parenthesisCount == 0) {
         if (at < end) {
@@ -89,7 +101,7 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
           return;
         }
       }
-    } else if (c == ']') {
+    } else if (!isEscape && c == ']') {
       bracketCount -= 1;
       if (bracketCount == 0) {
         if (at < end) {
@@ -110,7 +122,7 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
           return;
         }
       }
-    } else if (c == '*' || c == '+') {
+    } else if (!isEscape && (c == '*' || c == '+')) {
       if (parenthesisCount == 0) {
         if (at < end) {
           op = Operator::CONNECT;
@@ -133,12 +145,10 @@ RENode::RENode (string& re, int start, int end): re(re, start, end < start ? 0 :
         }
       }
     } else {
+      if (isEscape) {
+        isEscape = false;
+      }
       if (parenthesisCount == 0 && bracketCount == 0) {
-        if (c == '\\') {
-          assert_with_msg(at < end, "转义字符(\\)后面需要字符");
-          at += 1;
-          c = re[at];
-        }
         if (at < end) {
           char next = re[at + 1];
           if (next == '*' || next == '+') {
@@ -196,7 +206,7 @@ string RENode::toString (int tabs) {
   return res;
 }
 
-RETree::RETree (string& re): re(re), head(re, 0, re.size() - 1) {
+RETree::RETree (const string& re): re(re), head(re, 0, re.size() - 1) {
 }
 void RETree::print () {
   cout << "------print RE Tree start-----" << endl;

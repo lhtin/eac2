@@ -36,9 +36,9 @@ public:
   RENode* child;
   string re;
 
-  RENode (string& re, int start, int end);
+  RENode (const string& re, int start, int end);
   ~RENode ();
-  void expandRange (string& rre, int start, int end);
+  void expandRange (const string& rre, int start, int end);
   string toString (int tabs = 0);
 };
 
@@ -47,7 +47,7 @@ public:
   RENode head;
   const string& re;
 
-  explicit RETree (string& re);
+  explicit RETree (const string& re);
   void print ();
 };
 
