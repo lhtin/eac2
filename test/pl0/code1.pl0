@@ -1,0 +1,9 @@
+const sum = 0;
+var n1, n2;
+
+procedure add;
+sum := n1 + n2;
+
+!sum
+
+.

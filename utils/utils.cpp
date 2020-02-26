@@ -52,3 +52,23 @@ void assert_with_msg (bool isOK, string errMsg) {
     throw runtime_error(errMsg);
   }
 }
+
+bool isSame (ifstream& file, string content) {
+  char eof = char_traits<char>::eof();
+  int len = content.length();
+  int at = 0;
+
+  while (true) {
+    char c1 = file.get();
+    if (c1 == eof) {
+      return at == len;
+    }
+    if (at >= len) {
+      return false;
+    }
+    char c2 = content[at++];
+    if (c1 != c2) {
+      return false;
+    }
+  }
+}

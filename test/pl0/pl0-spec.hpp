@@ -41,7 +41,7 @@ Factor -> ident | number | "(" Expression ")"
 
 #include <map>
 #include <string>
-#include "../spec.hpp"
+#include "spec.hpp"
 
 using namespace std;
 

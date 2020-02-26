@@ -330,36 +330,9 @@ const Spec::CFG<Symbol> PL0_CFG{
 };
 ```
 
-定义好了之后，就可以调用写好的词法和语法分析生成器模版类、及parser解析源代码了（代码文件为`spec/pl0/test.cpp`）：
+定义好了之后，就可以调用写好的词法和语法分析生成器模版类、及parser解析源代码了（代码文件为`test/pl0/test.cpp`）。
 
-```c++
-#include <iostream>
-#include "utils.hpp"
-#include "Lex.hpp"
-#include "LR1.hpp"
-#include "parser.hpp"
-#include "pl0.hpp" // 定义好了终结符、非终结符、词法规则、语法规则等信息
-
-using namespace std;
-
-using My_Lex = Lex<Symbol>; // 生成PL/0词法分析器的class
-using My_LR1 = LR1<Symbol>; // 生成PL/0 LR(1)语法分析器的class
-using Parser = parser<My_Lex, My_LR1>; // 生成编译器class
-
-int main () {
-  My_Lex lex(LEX);
-  My_LR1 lr1(CFG, START_SYMBOL);
-  Parser c = Parser(lex, lr1);
-  printNow();
-  Parser::Output o = c.getOutput("test1.pl0");
-  printNow();
-  cout << "Tokens:\n" << o.tokens << endl;
-  cout << "AST:\n" << o.ast << endl; // 输出抽象语法树
-  return 0;
-}
-```
-
-例如解析`spec/pl0/test1.pl0`源码的输出可以查看根目录的`output.txt`文件。
+例如解析`test/pl0/code1.pl0`源码的输出可以查看`test/pl0/ast1.txt`文件。
 
 ## 待办
 

@@ -38,13 +38,17 @@ namespace Spec {
         type(type),
         nt_type(NonterminalSymbolType::None),
         t_type(TerminalSymbolType::none),
-        lex("") {}
+        lex(""),
+        line(-1),
+        column(-1) {}
 
     explicit Symbol(NonterminalSymbolType nt_type) :
         type(SymbolType::NON_TERMINAL_SYMBOL),
         nt_type(nt_type),
         t_type(TerminalSymbolType::none),
-        lex("") {}
+        lex(""),
+        line(-1),
+        column(-1) {}
 
     explicit Symbol(TerminalSymbolType t_type, string lex = "", int line = -1, int column = -1) :
         type(SymbolType::TERMINAL_SYMBOL),
@@ -91,14 +95,18 @@ namespace Spec {
 
     Symbol getPureSymbol ();
 
-    string getDesc() {
+    string getDesc(bool needPos = false) {
       string pos;
       switch (type) {
         case SymbolType::NON_TERMINAL_SYMBOL:
           return NonterminalDesc[nt_type];
         case SymbolType::TERMINAL_SYMBOL:
-          pos = to_string(line) + ":" + to_string(column);
-          return TerminalDesc[t_type] + (lex.size() > 0 ? (" " + escape(lex) + " " + pos) : "");
+          if (needPos) {
+            pos = to_string(line) + ":" + to_string(column);
+            return TerminalDesc[t_type] + (lex.size() > 0 ? (" " + escape(lex) + " " + pos) : "");
+          } else {
+            return TerminalDesc[t_type] + (lex.size() > 0 ? (" " + escape(lex)) : "");
+          }
         default:
           return "Error";
       }

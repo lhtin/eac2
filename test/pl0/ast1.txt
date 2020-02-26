@@ -1,0 +1,41 @@
+Program
+  Block
+    Assign
+      keyword const
+      ident sum
+      keyword =
+      number 0
+      keyword ;
+    Declare
+      keyword var
+      ident n1
+      DeclareRest
+        keyword ,
+        ident n2
+      keyword ;
+    Procedure
+      keyword procedure
+      ident add
+      keyword ;
+      Block
+        Statement
+          ident sum
+          keyword :=
+          Expression
+            Term
+              Factor
+                ident n1
+            ExpressionRest
+              Op1
+                keyword +
+              Term
+                Factor
+                  ident n2
+      keyword ;
+    Statement
+      keyword !
+      Expression
+        Term
+          Factor
+            ident sum
+  keyword .

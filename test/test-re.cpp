@@ -80,7 +80,8 @@ vector<pair<string, string>> TEST_SET = {
 )"}
 };
 
-int main () {
+void test_re () {
+  cout << endl;
   int total = 0;
   int success = 0;
   for (const auto& item : TEST_SET) {
@@ -97,6 +98,4 @@ int main () {
     }
   }
   cout << "RE.cpp test summary: total(" << total << ") success(" << success << ") fail(" << total - success << ")" << endl;
-
-  return 0;
 }

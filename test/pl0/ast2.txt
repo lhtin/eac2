@@ -1,0 +1,200 @@
+Program
+  Block
+    Assign
+      keyword const
+      ident max
+      keyword =
+      number 100
+      keyword ;
+    Declare
+      keyword var
+      ident arg
+      DeclareRest
+        keyword ,
+        ident ret
+      keyword ;
+    Procedure
+      keyword procedure
+      ident isprime
+      keyword ;
+      Block
+        Declare
+          keyword var
+          ident i
+          keyword ;
+        Statement
+          keyword begin
+          Statement
+            ident ret
+            keyword :=
+            Expression
+              Term
+                Factor
+                  number 1
+          StatementRest
+            keyword ;
+            Statement
+              ident i
+              keyword :=
+              Expression
+                Term
+                  Factor
+                    number 2
+            StatementRest
+              keyword ;
+              Statement
+                keyword while
+                Condition
+                  Expression
+                    Term
+                      Factor
+                        ident i
+                  RelationOp
+                    keyword <
+                  Expression
+                    Term
+                      Factor
+                        ident arg
+                keyword do
+                Statement
+                  keyword begin
+                  Statement
+                    keyword if
+                    Condition
+                      Expression
+                        Term
+                          Factor
+                            ident arg
+                          TermRest
+                            Op2
+                              keyword /
+                            Factor
+                              ident i
+                            TermRest
+                              Op2
+                                keyword *
+                              Factor
+                                ident i
+                      RelationOp
+                        keyword =
+                      Expression
+                        Term
+                          Factor
+                            ident arg
+                    keyword then
+                    Statement
+                      keyword begin
+                      Statement
+                        ident ret
+                        keyword :=
+                        Expression
+                          Term
+                            Factor
+                              number 0
+                      StatementRest
+                        keyword ;
+                        Statement
+                          ident i
+                          keyword :=
+                          Expression
+                            Term
+                              Factor
+                                ident arg
+                      keyword end
+                  StatementRest
+                    keyword ;
+                    Statement
+                      ident i
+                      keyword :=
+                      Expression
+                        Term
+                          Factor
+                            ident i
+                        ExpressionRest
+                          Op1
+                            keyword +
+                          Term
+                            Factor
+                              number 1
+                  keyword end
+          keyword end
+      keyword ;
+      Procedure
+        keyword procedure
+        ident primes
+        keyword ;
+        Block
+          Statement
+            keyword begin
+            Statement
+              ident arg
+              keyword :=
+              Expression
+                Term
+                  Factor
+                    number 2
+            StatementRest
+              keyword ;
+              Statement
+                keyword while
+                Condition
+                  Expression
+                    Term
+                      Factor
+                        ident arg
+                  RelationOp
+                    keyword <
+                  Expression
+                    Term
+                      Factor
+                        ident max
+                keyword do
+                Statement
+                  keyword begin
+                  Statement
+                    keyword call
+                    ident isprime
+                  StatementRest
+                    keyword ;
+                    Statement
+                      keyword if
+                      Condition
+                        Expression
+                          Term
+                            Factor
+                              ident ret
+                        RelationOp
+                          keyword =
+                        Expression
+                          Term
+                            Factor
+                              number 1
+                      keyword then
+                      Statement
+                        keyword !
+                        Expression
+                          Term
+                            Factor
+                              ident arg
+                    StatementRest
+                      keyword ;
+                      Statement
+                        ident arg
+                        keyword :=
+                        Expression
+                          Term
+                            Factor
+                              ident arg
+                          ExpressionRest
+                            Op1
+                              keyword +
+                            Term
+                              Factor
+                                number 1
+                  keyword end
+            keyword end
+        keyword ;
+    Statement
+      keyword call
+      ident primes
+  keyword .

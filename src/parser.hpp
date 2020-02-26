@@ -4,7 +4,10 @@
 #include <stack>
 #include <utility>
 #include <string>
+#include <fstream>
 #include "utils.hpp"
+
+using namespace std;
 
 template <typename Symbol, typename Lex, typename LR1>
 class parser {
@@ -141,7 +144,7 @@ public:
     bufAt = 0;
 
     Symbol s = Symbol(type, text, currentLine, currentColumn);
-    o.tokens += s.getDesc() + "\n";
+    o.tokens += s.getDesc(true) + "\n";
     return s;
   }
   AST getAST () {
