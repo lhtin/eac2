@@ -11,5 +11,5 @@ link_libraries(lex utils)
 
 #### test
 add_executable(test test/test.cpp)
-add_library(testSet test/test-re.cpp test/pl0/test.cpp)
+add_library(testSet test/test-re.cpp test/test-pl0.cpp)
 target_link_libraries(test testSet)

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include <string>
 #include "Lex.hpp"
 #include "LR1.hpp"
@@ -12,15 +13,15 @@ using My_Lex = Lex<Symbol>; // 生成PL/0词法分析器的class
 using My_LR1 = LR1<Symbol>; // 生成PL/0 LR(1)语法分析器的class
 using Parser = parser<Symbol, My_Lex, My_LR1>; // 生成编译器class
 
-void test_parser () {
+void test_parser (const filesystem::path& path) {
   My_Lex lex(LEX);
   My_LR1 lr1(CFG, START_SYMBOL);
   Parser c = Parser(lex, lr1);
 
   {
     vector<pair<string, string>> list = {
-        {"pl0/code1.pl0", "pl0/tokens1.txt"},
-        {"pl0/code2.pl0", "pl0/tokens2.txt"},
+        {joinPath(path, "pl0/code1.pl0"), joinPath(path, "pl0/tokens1.txt")},
+        {joinPath(path, "pl0/code2.pl0"), joinPath(path, "pl0/tokens2.txt")},
     };
 
     cout << endl;
@@ -48,8 +49,8 @@ void test_parser () {
 
   {
     vector<pair<string, string>> list = {
-        {"pl0/code1.pl0", "pl0/ast1.txt"},
-        {"pl0/code2.pl0", "pl0/ast2.txt"},
+        {joinPath(path, "pl0/code1.pl0"), joinPath(path, "pl0/ast1.txt")},
+        {joinPath(path, "pl0/code2.pl0"), joinPath(path, "pl0/ast2.txt")},
     };
 
     cout << endl;

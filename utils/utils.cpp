@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <stdexcept>
+#include <filesystem>
 
 #include "utils.hpp"
 
@@ -71,4 +72,8 @@ bool isSame (ifstream& file, string content) {
       return false;
     }
   }
+}
+
+string joinPath(const filesystem::path& path1, string path2) {
+  return filesystem::path(path1).append(path2).lexically_normal().string();
 }

@@ -4,6 +4,16 @@ Engineering a Compiler, Second Edition
 
 代码实现，通过定义好词法规则和语法规则，解析相应源码生成抽象语法树。
 
+## 运行测试用例
+
+```
+mkdir build
+cd build
+cmake ../
+cmake --build .
+./test ../test/
+```
+
 ## 目录结构
 
 ```

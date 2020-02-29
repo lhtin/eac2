@@ -3,3 +3,4 @@
 *.a
 main
 cmake-build-debug
+build
