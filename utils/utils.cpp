@@ -77,3 +77,10 @@ bool isSame (ifstream& file, string content) {
 string joinPath(const filesystem::path& path1, string path2) {
   return filesystem::path(path1).append(path2).lexically_normal().string();
 }
+
+void checkTailPath (string currentPath, string expectedTailPath) {
+  string::size_type index = currentPath.rfind(expectedTailPath);
+  assert_with_msg(
+      index != string::npos && currentPath.size() - index == expectedTailPath.size(),
+      "需要在" + expectedTailPath + "目录下运行测试程序，当前所在目录为：" + currentPath);
+}

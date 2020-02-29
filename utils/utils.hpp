@@ -15,5 +15,6 @@ void assert_with_msg (bool isOK, string errMsg);
 // 判断文件内容是否跟content一致
 bool isSame (ifstream& file, string content);
 string joinPath(const filesystem::path& path1, string path2);
+void checkTailPath (string currentPath, string expectedTailPath);
 
 #endif //EAC2_UTILS_HPP

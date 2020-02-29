@@ -13,3 +13,5 @@ link_libraries(lex utils)
 add_executable(test test/test.cpp)
 add_library(testSet test/test-re.cpp test/test-pl0.cpp)
 target_link_libraries(test testSet)
+
+add_executable(main main.cpp)
