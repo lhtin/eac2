@@ -32,11 +32,11 @@ cmake --build .
 - utils // 帮助函数
 ```
 
-## 示例
+## 词法和语法规范定义
 
-下面示例展示PL/0语言的解析。首先是定义词法和语法规则，终结符和非终结符等请看`spec/pl0/pl0.hpp`文件
+下面示例展示如何定义PL/0语言的词法和语法规则，终结符和非终结符的定义请看`test/pl0-spec.hpp`文件
 
-词法定义:
+词法规则定义:
 
 ```c++
 const Lex PL0_LEX{
@@ -59,7 +59,7 @@ const Lex PL0_LEX{
 };
 ```
 
-语法定义:
+语法规则定义:
 
 ```c++
 const Spec::CFG<Symbol> PL0_CFG{
