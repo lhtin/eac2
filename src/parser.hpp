@@ -182,8 +182,8 @@ public:
           return AST(parent);
         }
       } else {
-        // 到达此处说明构建不成功
-        return AST(Node(Symbol(SymbolType::NONE)));
+        // 到达此处说明构建不成功，输出无法识别的token和位置
+        assert_with_msg(false, word.getDesc(true));
       }
     }
   }
