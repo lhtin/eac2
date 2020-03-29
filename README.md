@@ -2,7 +2,7 @@
 
 Engineering a Compiler, Second Edition
 
-代码实现，通过定义好词法规则和语法规则，解析相应源码生成抽象语法树。
+实现EaC2中的编译器算法，感谢吴伟的[方舟·编译技术入门与实战](https://www.bilibili.com/video/BV1TJ411v7ys)视频课程提供的讲解。
 
 ## 运行测试用例
 
