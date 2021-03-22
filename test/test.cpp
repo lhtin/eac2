@@ -9,7 +9,7 @@ int main (int argc, char* args[]) {
   currentPath.append(argc >= 2 ? string(args[1]) : "");
   string p = currentPath.lexically_normal().string();
 
-  checkTailPath(p, "/EaC2/test/");
+  checkTailPath(p, "/eac2/test/");
 
   test_re();
   test_parser(currentPath);

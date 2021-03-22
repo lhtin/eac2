@@ -18,7 +18,7 @@ int main (int argc, char* args[]) {
   currentPath.append(argc >= 2 ? string(args[1]) : "");
   string p = currentPath.lexically_normal().string();
 
-  checkTailPath(p, "/EaC2/");
+  checkTailPath(p, "/eac2/");
 
   My_Lex lex(LEX);
   My_LR1 lr1(CFG, START_SYMBOL);

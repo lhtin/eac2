@@ -6,12 +6,16 @@ Engineering a Compiler, Second Edition
 
 ## 运行测试用例
 
-```
-mkdir build
-cd build
-cmake ../
-cmake --build .
+```shell
+# 构建
+mkdir build && cd build
+cmake ../ && cmake --build .
+
+# test
 ./test ../test/
+
+# main
+cd ../ && ./main
 ```
 
 ## 目录结构
