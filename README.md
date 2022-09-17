@@ -2,7 +2,7 @@
 
 Engineering a Compiler, Second Edition
 
-实现EaC2中的编译器算法，感谢吴伟的[方舟·编译技术入门与实战](https://www.bilibili.com/video/BV1TJ411v7ys)视频课程提供的讲解。
+实现EaC2中的编译器算法，感谢PLCT的[方舟·编译技术入门与实战](https://www.bilibili.com/video/BV1TJ411v7ys)视频课程提供的讲解。
 
 ## 运行测试用例
 
